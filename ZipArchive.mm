@@ -11,6 +11,7 @@
 #import "zlib.h"
 #import "zconf.h"
 
+
 @interface ZipArchive (Private)
 
 -(void) OutputErrorMessage:(NSString*) msg;
@@ -59,7 +60,7 @@
 	NSDictionary* attr = [[NSFileManager defaultManager] fileAttributesAtPath:file traverseLink:YES];
 	if( attr )
 	{
-		NSDate* fileDate = (NSDate*)[attr objectForKey:NSFileCreationDate];
+		NSDate* fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
 		if( fileDate )
 		{
 			zipInfo.dosDate = [fileDate timeIntervalSinceDate:[self Date1980] ];
@@ -197,7 +198,7 @@
 								   initWithTimeInterval:(NSTimeInterval)fileInfo.dosDate 
 								   sinceDate:[self Date1980] ];
 
-				NSDictionary* attr = [NSDictionary dictionaryWithObject:orgDate forKey:NSFileCreationDate]; //[[NSFileManager defaultManager] fileAttributesAtPath:fullPath traverseLink:YES];
+				NSDictionary* attr = [NSDictionary dictionaryWithObject:orgDate forKey:NSFileModificationDate]; //[[NSFileManager defaultManager] fileAttributesAtPath:fullPath traverseLink:YES];
 				if( attr )
 				{
 				//	[attr  setValue:orgDate forKey:NSFileCreationDate];
