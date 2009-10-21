@@ -12,6 +12,7 @@
 #import "zconf.h"
 
 
+
 @interface ZipArchive (Private)
 
 -(void) OutputErrorMessage:(NSString*) msg;
@@ -46,6 +47,13 @@
 		return NO;
 	return YES;
 }
+
+-(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password
+{
+	_password = password;
+	return [self CreateZipFile2:zipFile];
+}
+
 -(BOOL) addFileToZip:(NSString*) file newname:(NSString*) newname;
 {
 	if( !_zipFile )
@@ -67,7 +75,11 @@
 		}
 	}
 	
-	int ret = zipOpenNewFileInZip( _zipFile,
+	int ret ;
+	NSData* data = nil;
+	if( [_password length] == 0 )
+	{
+		ret = zipOpenNewFileInZip( _zipFile,
 								  (const char*) [newname UTF8String],
 								  &zipInfo,
 								  NULL,0,
@@ -75,11 +87,35 @@
 								  NULL,//comment
 								  Z_DEFLATED,
 								  Z_DEFAULT_COMPRESSION );
+	}
+	else
+	{
+		data = [ NSData dataWithContentsOfFile:file];
+		uLong crcValue = crc32( 0L,NULL, 0L );
+		crcValue = crc32( crcValue, (const Bytef*)[data bytes], [data length] );
+		ret = zipOpenNewFileInZip3( _zipFile,
+								  (const char*) [newname UTF8String],
+								  &zipInfo,
+								  NULL,0,
+								  NULL,0,
+								  NULL,//comment
+								  Z_DEFLATED,
+								  Z_DEFAULT_COMPRESSION,
+								  0,
+								  15,
+								  8,
+								  Z_DEFAULT_STRATEGY,
+								  [_password cStringUsingEncoding:NSASCIIStringEncoding],
+								  crcValue );
+	}
 	if( ret!=Z_OK )
 	{
 		return NO;
 	}
-	NSData* data = [ NSData dataWithContentsOfFile:file];
+	if( data==nil )
+	{
+		data = [ NSData dataWithContentsOfFile:file];
+	}
 	unsigned int dataLen = [data length];
 	ret = zipWriteInFileInZip( _zipFile, (const void*)[data bytes], dataLen);
 	if( ret!=Z_OK )
@@ -91,8 +127,10 @@
 		return NO;
 	return YES;
 }
+
 -(BOOL) CloseZipFile2
 {
+	_password = nil;
 	if( _zipFile==NULL )
 		return NO;
 	BOOL ret =  zipClose( _zipFile,NULL )==Z_OK?YES:NO;
@@ -113,6 +151,13 @@
 	}
 	return _unzFile!=NULL;
 }
+
+-(BOOL) UnzipOpenFile:(NSString*) zipFile Password:(NSString*) password
+{
+	_password = password;
+	return [self UnzipOpenFile:zipFile];
+}
+
 -(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite
 {
 	BOOL success = YES;
@@ -125,7 +170,10 @@
 	}
 	
 	do{
-		ret = unzOpenCurrentFile( _unzFile );
+		if( [_password length]==0 )
+			ret = unzOpenCurrentFile( _unzFile );
+		else
+			ret = unzOpenCurrentFilePassword( _unzFile, [_password cStringUsingEncoding:NSASCIIStringEncoding] );
 		if( ret!=UNZ_OK )
 		{
 			[self OutputErrorMessage:@"Error occurs"];
@@ -222,6 +270,7 @@
 
 -(BOOL) UnzipCloseFile
 {
+	_password = nil;
 	if( _unzFile )
 		return unzClose( _unzFile )==UNZ_OK;
 	return YES;
@@ -257,4 +306,7 @@
 	return date;
 }
 
+
 @end
+
+
