@@ -283,13 +283,13 @@
 #pragma mark wrapper for delegate
 -(void) OutputErrorMessage:(NSString*) msg
 {
-	if( _delegate && [_delegate respondsToSelector:@selector(ErrorMessage)] )
+	if( _delegate && [_delegate respondsToSelector:@selector(ErrorMessage:)] )
 		[_delegate ErrorMessage:msg];
 }
 
 -(BOOL) OverWrite:(NSString*) file
 {
-	if( _delegate && [_delegate respondsToSelector:@selector(OverWriteOperation)] )
+	if( _delegate && [_delegate respondsToSelector:@selector(OverWriteOperation:)] )
 		return [_delegate OverWriteOperation:file];
 	return YES;
 }
