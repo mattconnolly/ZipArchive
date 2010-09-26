@@ -30,6 +30,7 @@
 @implementation ZipArchive
 @synthesize delegate = _delegate;
 @synthesize password = _password;
+@synthesize unzippedFiles = _unzippedFiles;
 
 -(id) init
 {
@@ -49,6 +50,7 @@
     // release retained/copied properties.
     [_password release];
     [_delegate release];
+    [_unzippedFiles release];
     
 	[super dealloc];
 }
@@ -154,6 +156,10 @@
 
 -(BOOL) UnzipOpenFile:(NSString*) zipFile
 {
+    // create an array to receive the list of unzipped files.
+    if (_unzippedFiles) [_unzippedFiles release];
+    _unzippedFiles = [[NSMutableArray alloc] initWithCapacity:1];
+    
 	_unzFile = unzOpen( (const char*)[zipFile UTF8String] );
 	if( _unzFile )
 	{
@@ -253,6 +259,10 @@
 		if( fp )
 		{
 			fclose( fp );
+            
+            // add the full path of this file to the output array
+            [(NSMutableArray*)_unzippedFiles addObject:fullPath];
+            
 			// set the orignal datetime property
 			if( fileInfo.dosDate!=0 )
 			{

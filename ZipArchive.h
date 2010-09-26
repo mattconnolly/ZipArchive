@@ -28,9 +28,12 @@
 	
 	NSString*   _password;
 	id			_delegate;
+    
+    NSArray*    _unzippedFiles;
 }
 
 @property (nonatomic, retain) id delegate;
+@property (nonatomic, readonly) NSArray* unzippedFiles;
 
 -(BOOL) CreateZipFile2:(NSString*) zipFile;
 -(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password;
