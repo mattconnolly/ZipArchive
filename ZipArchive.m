@@ -16,17 +16,20 @@
 - (NSDictionary *)_attributesOfItemAtPath:(NSString *)path followingSymLinks:(BOOL)followingSymLinks error:(NSError **)error;
 @end
 
-@interface ZipArchive (Private)
+@interface ZipArchive ()
 
 -(void) OutputErrorMessage:(NSString*) msg;
 -(BOOL) OverWrite:(NSString*) file;
 -(NSDate*) Date1980;
+
+@property (nonatomic,copy) NSString* password;
 @end
 
 
 
 @implementation ZipArchive
 @synthesize delegate = _delegate;
+@synthesize password = _password;
 
 -(id) init
 {
@@ -39,7 +42,14 @@
 
 -(void) dealloc
 {
+    // close any open file operations
 	[self CloseZipFile2];
+    [self UnzipCloseFile];
+    
+    // release retained/copied properties.
+    [_password release];
+    [_delegate release];
+    
 	[super dealloc];
 }
 
@@ -53,7 +63,7 @@
 
 -(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password
 {
-	_password = password;
+	self.password = password;
 	return [self CreateZipFile2:zipFile];
 }
 
@@ -134,7 +144,7 @@
 
 -(BOOL) CloseZipFile2
 {
-	_password = nil;
+	self.password = nil;
 	if( _zipFile==NULL )
 		return NO;
 	BOOL ret =  zipClose( _zipFile,NULL )==Z_OK?YES:NO;
@@ -158,7 +168,7 @@
 
 -(BOOL) UnzipOpenFile:(NSString*) zipFile Password:(NSString*) password
 {
-	_password = password;
+	self.password = password;
 	return [self UnzipOpenFile:zipFile];
 }
 
@@ -274,7 +284,7 @@
 
 -(BOOL) UnzipCloseFile
 {
-	_password = nil;
+	self.password = nil;
 	if( _unzFile )
 		return unzClose( _unzFile )==UNZ_OK;
 	return YES;
