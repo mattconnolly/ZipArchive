@@ -285,8 +285,11 @@
 -(BOOL) UnzipCloseFile
 {
 	self.password = nil;
-	if( _unzFile )
-		return unzClose( _unzFile )==UNZ_OK;
+	if( _unzFile ) {
+		int err = unzClose( _unzFile );
+        _unzFile = nil;
+        return err ==UNZ_OK;
+    }
 	return YES;
 }
 
