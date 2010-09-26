@@ -12,6 +12,9 @@
 #import "zconf.h"
 
 
+@interface NSFileManager(ZipArchive)
+- (NSDictionary *)_attributesOfItemAtPath:(NSString *)path followingSymLinks:(BOOL)followingSymLinks error:(NSError **)error;
+@end
 
 @interface ZipArchive (Private)
 
@@ -65,7 +68,8 @@
 	zip_fileinfo zipInfo = {0};
 	zipInfo.dosDate = (unsigned long) current;
 	
-	NSDictionary* attr = [[NSFileManager defaultManager] fileAttributesAtPath:file traverseLink:YES];
+    NSError* error = nil;
+	NSDictionary* attr = [[NSFileManager defaultManager] _attributesOfItemAtPath:file followingSymLinks:YES error:&error];
 	if( attr )
 	{
 		NSDate* fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
@@ -309,4 +313,27 @@
 
 @end
 
+
+@implementation NSFileManager(ZipArchive)
+
+- (NSDictionary *)_attributesOfItemAtPath:(NSString *)path followingSymLinks:(BOOL)followingSymLinks error:(NSError **)error
+{
+    // call file manager default action, which is to not follow symlinks
+    NSDictionary* results = [self attributesOfItemAtPath:path error:error];
+    if (followingSymLinks && results && (error ? *error == nil : YES)) {
+        if ([[results fileType] isEqualToString:NSFileTypeSymbolicLink]) {
+            // follow the symlink
+            NSString* realPath = [self destinationOfSymbolicLinkAtPath:path error:error];
+            if (realPath && (error ? *error == nil : YES)) {
+                return [self _attributesOfItemAtPath:realPath followingSymLinks:followingSymLinks error:error];
+            } else {
+                // failure to resolve symlink should be an error returning nil and error will already be set.
+                return nil;
+            }
+        }
+    }
+    return results;
+}
+
+@end
 
