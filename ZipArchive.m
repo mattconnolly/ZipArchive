@@ -55,6 +55,13 @@
 	[super dealloc];
 }
 
+/**
+ * Create a new zip file at the specified path, ready for new files to be added.
+ *
+ * @param NSString* zipFile     the path of the zip file to create
+ * @returns BOOL yes on success
+ */
+
 -(BOOL) CreateZipFile2:(NSString*) zipFile
 {
 	_zipFile = zipOpen( (const char*)[zipFile UTF8String], 0 );
@@ -63,11 +70,27 @@
 	return YES;
 }
 
+/**
+ * Create a new zip file at the specified path, ready for new files to be added.
+ *
+ * @param NSString* zipFile     the path of the zip file to create
+ * @param NSString* password    a password used to encrypt the zip file
+ * @returns BOOL yes on success
+ */
+
 -(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password
 {
 	self.password = password;
 	return [self CreateZipFile2:zipFile];
 }
+
+/**
+ * add an existing file on disk to the zip archive, compressing it.
+ *
+ * @param NSString* file    the path to the file to compress
+ * @param NSString* newname the name of the file in the zip archive, ie: path relative to the zip archive root.
+ * @returns BOOL yes on success
+ */
 
 -(BOOL) addFileToZip:(NSString*) file newname:(NSString*) newname;
 {
@@ -144,6 +167,12 @@
 	return YES;
 }
 
+/**
+ * Close a zip file after creating and added files to it.
+ *
+ * @returns BOOL yes on success
+ */
+
 -(BOOL) CloseZipFile2
 {
 	self.password = nil;
@@ -153,6 +182,13 @@
 	_zipFile = NULL;
 	return ret;
 }
+
+/**
+ * open an existing zip file ready for expanding.
+ *
+ * @param NSString* zipFile     the path to a zip file to be opened.
+ * @returns BOOL YES in succeeded
+ */
 
 -(BOOL) UnzipOpenFile:(NSString*) zipFile
 {
@@ -172,11 +208,33 @@
 	return _unzFile!=NULL;
 }
 
+/**
+ * open an existing zip file with a password ready for expanding.
+ *
+ * @param NSString* zipFile     the path to a zip file to be opened.
+ * @param NSString* password    the password to use decrpyting the file.
+ * @returns BOOL YES in succeeded
+ */
+
 -(BOOL) UnzipOpenFile:(NSString*) zipFile Password:(NSString*) password
 {
 	self.password = password;
 	return [self UnzipOpenFile:zipFile];
 }
+
+/**
+ * Expand all files in the zip archive into the specified directory.
+ *
+ * If a delegate has been set and responds to OverWriteOperation: it can
+ * return YES to overwrite a file, or NO to skip that file.
+ *
+ * On completion, the property `unzippedFiles` will be an array populated
+ * with the full paths of each file that was successfully expanded.
+ *
+ * @param NSString* path    the directory where expanded files will be created
+ * @param BOOL overwrite    should existing files be overwritten
+ * @returns BOOL            YES = success
+ */
 
 -(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite
 {
@@ -292,6 +350,12 @@
 	return success;
 }
 
+/**
+ * Close the zip file.
+ *
+ * @returns BOOL YES on success
+ */
+
 -(BOOL) UnzipCloseFile
 {
 	self.password = nil;
@@ -372,11 +436,20 @@
 
 
 #pragma mark wrapper for delegate
+
+/**
+ * send the ErrorMessage: to the delegate if it responds to it.
+ */
 -(void) OutputErrorMessage:(NSString*) msg
 {
 	if( _delegate && [_delegate respondsToSelector:@selector(ErrorMessage:)] )
 		[_delegate ErrorMessage:msg];
 }
+
+/**
+ * send the OverWriteOperation: selector to the delegate if it responds to it,
+ * returning the result, or YES by default.
+ */
 
 -(BOOL) OverWrite:(NSString*) file
 {
