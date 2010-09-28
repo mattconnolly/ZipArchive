@@ -303,6 +303,74 @@
 	return YES;
 }
 
+
+/**
+ * Return a list of filenames that are in the zip archive. 
+ * No path information is available as this can be called before the zip is expanded.
+ *
+ * @returns NSArray list of filenames in the zip archive. 
+ */
+
+-(NSArray*) getZipFileContents     // list the contents of the zip archive. must be called after UnzipOpenFile
+{
+    BOOL success = YES;
+    int ret = unzGoToFirstFile( _unzFile );
+    NSMutableArray * allFilenames = [NSMutableArray arrayWithCapacity:40];
+    
+    if( ret!=UNZ_OK )
+    {
+        [self OutputErrorMessage:@"Failed"];
+    }
+    
+    do{
+        if( [_password length]==0 )
+            ret = unzOpenCurrentFile( _unzFile );
+        else
+            ret = unzOpenCurrentFilePassword( _unzFile, [_password cStringUsingEncoding:NSASCIIStringEncoding] );
+        if( ret!=UNZ_OK )
+        {
+            [self OutputErrorMessage:@"Error occured"];
+            success = NO;
+            break;
+        }
+        
+        // reading data and write to file
+        unz_file_info   fileInfo ={0};
+        ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+        if( ret!=UNZ_OK )
+        {
+            [self OutputErrorMessage:@"Error occurs while getting file info"];
+            success = NO;
+            unzCloseCurrentFile( _unzFile );
+            break;
+        }
+        char* filename = (char*) malloc( fileInfo.size_filename +1 );
+        unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
+        filename[fileInfo.size_filename] = '\0';
+        
+        // check if it contains directory
+        NSString * strPath = [NSString stringWithCString:filename encoding:NSASCIIStringEncoding];
+        BOOL isDirectory = NO;
+        if( filename[fileInfo.size_filename-1]=='/' || filename[fileInfo.size_filename-1]=='\\')
+            isDirectory = YES;
+        free( filename );
+        if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
+        {// contains a path
+            strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+        }
+        
+        // Copy name to array
+        [allFilenames addObject:[strPath copy]];
+        
+        unzCloseCurrentFile( _unzFile );
+        ret = unzGoToNextFile( _unzFile );
+    }  while( ret==UNZ_OK && UNZ_OK!=UNZ_END_OF_LIST_OF_FILE );
+    
+    // return an immutable array.
+    return [NSArray arrayWithArray:allFilenames];
+}
+
+
 #pragma mark wrapper for delegate
 -(void) OutputErrorMessage:(NSString*) msg
 {
