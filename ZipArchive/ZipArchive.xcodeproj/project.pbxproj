@@ -19,7 +19,7 @@
 		C9E8EBF4124F3D030047C862 /* unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E8EBEA124F3D030047C862 /* unzip.h */; };
 		C9E8EBF5124F3D030047C862 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = C9E8EBEB124F3D030047C862 /* zip.c */; };
 		C9E8EBF6124F3D030047C862 /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E8EBEC124F3D030047C862 /* zip.h */; };
-		C9E8EBF9124F3D170047C862 /* ZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E8EBF7124F3D170047C862 /* ZipArchive.h */; };
+		C9E8EBF9124F3D170047C862 /* ZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E8EBF7124F3D170047C862 /* ZipArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C9E8EBFA124F3D170047C862 /* ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = C9E8EBF8124F3D170047C862 /* ZipArchive.m */; };
 /* End PBXBuildFile section */
 
@@ -210,6 +210,7 @@
 				GCC_PREFIX_HEADER = ZipArchive_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = ZipArchive;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
 			};
 			name = Debug;
 		};
@@ -224,6 +225,7 @@
 				GCC_PREFIX_HEADER = ZipArchive_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = ZipArchive;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
 			};
 			name = Release;
 		};
