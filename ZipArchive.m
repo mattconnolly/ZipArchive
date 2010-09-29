@@ -1,11 +1,12 @@
-//
-//  ZipArchive.mm
+/**
+//  ZipArchive.m
 //  
 //
 //  Created by aish on 08-9-11.
 //  acsolu@gmail.com
 //  Copyright 2008  Inc. All rights reserved.
 //
+*/
 
 #import "ZipArchive.h"
 #import "zlib.h"
@@ -58,8 +59,8 @@
 /**
  * Create a new zip file at the specified path, ready for new files to be added.
  *
- * @param NSString* zipFile     the path of the zip file to create
- * @returns BOOL yes on success
+ * @param zipFile     the path of the zip file to create
+ * @returns BOOL YES on success
  */
 
 -(BOOL) CreateZipFile2:(NSString*) zipFile
@@ -73,9 +74,9 @@
 /**
  * Create a new zip file at the specified path, ready for new files to be added.
  *
- * @param NSString* zipFile     the path of the zip file to create
- * @param NSString* password    a password used to encrypt the zip file
- * @returns BOOL yes on success
+ * @param zipFile     the path of the zip file to create
+ * @param password    a password used to encrypt the zip file
+ * @returns BOOL YES on success
  */
 
 -(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password
@@ -87,9 +88,9 @@
 /**
  * add an existing file on disk to the zip archive, compressing it.
  *
- * @param NSString* file    the path to the file to compress
- * @param NSString* newname the name of the file in the zip archive, ie: path relative to the zip archive root.
- * @returns BOOL yes on success
+ * @param file    the path to the file to compress
+ * @param newname the name of the file in the zip archive, ie: path relative to the zip archive root.
+ * @returns BOOL YES on success
  */
 
 -(BOOL) addFileToZip:(NSString*) file newname:(NSString*) newname;
@@ -170,7 +171,7 @@
 /**
  * Close a zip file after creating and added files to it.
  *
- * @returns BOOL yes on success
+ * @returns BOOL YES on success
  */
 
 -(BOOL) CloseZipFile2
@@ -186,8 +187,8 @@
 /**
  * open an existing zip file ready for expanding.
  *
- * @param NSString* zipFile     the path to a zip file to be opened.
- * @returns BOOL YES in succeeded
+ * @param zipFile     the path to a zip file to be opened.
+ * @returns BOOL YES on success
  */
 
 -(BOOL) UnzipOpenFile:(NSString*) zipFile
@@ -211,9 +212,9 @@
 /**
  * open an existing zip file with a password ready for expanding.
  *
- * @param NSString* zipFile     the path to a zip file to be opened.
- * @param NSString* password    the password to use decrpyting the file.
- * @returns BOOL YES in succeeded
+ * @param zipFile     the path to a zip file to be opened.
+ * @param password    the password to use decrpyting the file.
+ * @returns BOOL YES on success
  */
 
 -(BOOL) UnzipOpenFile:(NSString*) zipFile Password:(NSString*) password
@@ -231,9 +232,9 @@
  * On completion, the property `unzippedFiles` will be an array populated
  * with the full paths of each file that was successfully expanded.
  *
- * @param NSString* path    the directory where expanded files will be created
- * @param BOOL overwrite    should existing files be overwritten
- * @returns BOOL            YES = success
+ * @param path    the directory where expanded files will be created
+ * @param overwrite    should existing files be overwritten
+ * @returns BOOL YES on success
  */
 
 -(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite
