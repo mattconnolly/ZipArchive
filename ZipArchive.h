@@ -47,6 +47,17 @@
 
 -(BOOL) OverWriteOperation:(NSString*) file;
 
+/**
+    @brief   Delegate method to report unzipping progress
+ 
+    TBD
+ 
+    @param      percentage - Current progress in percentage
+    @result     void
+ */
+
+- (void)unzipProgress:(int)percentage;
+
 @end
 
 /**
@@ -64,6 +75,7 @@
 	zipFile		_zipFile;
 	unzFile		_unzFile;
 	
+    int         _numFiles;
 	NSString*   _password;
 	id			_delegate;
     
@@ -72,6 +84,7 @@
 
 /** a delegate object conforming to ZipArchiveDelegate protocol */
 @property (nonatomic, retain) id<ZipArchiveDelegate> delegate;
+@property (nonatomic, assign) int numFiles;
 
 /** an array of files that were successfully expanded. Available after calling UnzipFileTo:overWrite: */
 @property (nonatomic, readonly) NSArray* unzippedFiles;

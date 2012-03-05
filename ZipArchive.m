@@ -30,6 +30,7 @@
 
 @implementation ZipArchive
 @synthesize delegate = _delegate;
+@synthesize numFiles = _numFiles;
 @synthesize password = _password;
 @synthesize unzippedFiles = _unzippedFiles;
 
@@ -203,6 +204,7 @@
 		unz_global_info  globalInfo = {0};
 		if( unzGetGlobalInfo(_unzFile, &globalInfo )==UNZ_OK )
 		{
+            self.numFiles = globalInfo.number_entry;
 			NSLog(@"%d entries in the zip file", globalInfo.number_entry);
 		}
 	}
@@ -240,6 +242,8 @@
 -(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite
 {
 	BOOL success = YES;
+    int index = 0;
+    int progress = -1;
 	int ret = unzGoToFirstFile( _unzFile );
 	unsigned char		buffer[4096] = {0};
 	NSFileManager* fman = [NSFileManager defaultManager];
@@ -247,7 +251,9 @@
 	{
 		[self OutputErrorMessage:@"Failed"];
 	}
-	
+	BOOL delegateProgress = NO; 
+    if (_delegate && [_delegate respondsToSelector:@selector(unzipProgress:)])
+        delegateProgress = YES;
 	do{
 		if( [_password length]==0 )
 			ret = unzOpenCurrentFile( _unzFile );
@@ -259,6 +265,14 @@
 			success = NO;
 			break;
 		}
+        if (delegateProgress) {
+            index++;
+            int p = index*100/_numFiles;
+            if (p!=progress) {
+                progress = p;
+                [_delegate unzipProgress:progress];
+            }
+        }
 		// reading data and write to file
 		int read ;
 		unz_file_info	fileInfo ={0};
