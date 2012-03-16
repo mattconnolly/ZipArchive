@@ -204,8 +204,8 @@
 		unz_global_info  globalInfo = {0};
 		if( unzGetGlobalInfo(_unzFile, &globalInfo )==UNZ_OK )
 		{
-            self.numFiles = globalInfo.number_entry;
-			NSLog(@"%d entries in the zip file", globalInfo.number_entry);
+            _numFiles = globalInfo.number_entry;
+			NSLog(@"%lu entries in the zip file", globalInfo.number_entry);
 		}
 	}
 	return _unzFile!=NULL;
@@ -239,7 +239,7 @@
  * @returns BOOL YES on success
  */
 
--(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite
+-(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite withProgressBlock:(void (^)(int percentage, int filesProcessed, int numFiles))progressBlock
 {
 	BOOL success = YES;
     int index = 0;
@@ -251,9 +251,6 @@
 	{
 		[self OutputErrorMessage:@"Failed"];
 	}
-	BOOL delegateProgress = NO; 
-    if (_delegate && [_delegate respondsToSelector:@selector(unzipProgress:)])
-        delegateProgress = YES;
 	do{
 		if( [_password length]==0 )
 			ret = unzOpenCurrentFile( _unzFile );
@@ -265,14 +262,6 @@
 			success = NO;
 			break;
 		}
-        if (delegateProgress) {
-            index++;
-            int p = index*100/_numFiles;
-            if (p!=progress) {
-                progress = p;
-                [_delegate unzipProgress:progress];
-            }
-        }
 		// reading data and write to file
 		int read ;
 		unz_file_info	fileInfo ={0};
@@ -361,6 +350,14 @@
 		}
 		unzCloseCurrentFile( _unzFile );
 		ret = unzGoToNextFile( _unzFile );
+        if (progressBlock && _numFiles) {
+            index++;
+            int p = index*100/_numFiles;
+            if (p!=progress) {
+                progress = p;
+                progressBlock(progress, index, _numFiles);
+            }
+        }
 	}while( ret==UNZ_OK && UNZ_OK!=UNZ_END_OF_LIST_OF_FILE );
 	return success;
 }
