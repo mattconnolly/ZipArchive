@@ -353,10 +353,8 @@
         if (progressBlock && _numFiles) {
             index++;
             int p = index*100/_numFiles;
-            if (p!=progress) {
-                progress = p;
-                progressBlock(progress, index, _numFiles);
-            }
+            progress = p;
+            progressBlock(progress, index, _numFiles);
         }
 	}while( ret==UNZ_OK && UNZ_OK!=UNZ_END_OF_LIST_OF_FILE );
 	return success;
