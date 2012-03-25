@@ -225,6 +225,28 @@
 	return [self UnzipOpenFile:zipFile];
 }
 
+
+/**
+ * Expand all files in the zip archive into the specified directory.
+ *
+ * If a delegate has been set and responds to OverWriteOperation: it can
+ * return YES to overwrite a file, or NO to skip that file.
+ *
+ * On completion, the property `unzippedFiles` will be an array populated
+ * with the full paths of each file that was successfully expanded.
+ *
+ * @param path    the directory where expanded files will be created
+ * @param overwrite    should existing files be overwritten
+ * @returns BOOL YES on success
+ */
+
+-(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite
+{
+    return [self UnzipFileTo:path
+                   overWrite:overwrite
+           withProgressBlock:nil];
+}
+
 /**
  * Expand all files in the zip archive into the specified directory.
  *
@@ -241,7 +263,7 @@
  * @returns BOOL YES on success
  */
 
--(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite withProgressBlock:(void (^)(int percentage, int filesProcessed, int numFiles))progressBlock
+-(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite withProgressBlock:(ZipArchiveProgressUpdateBlock)progressBlock
 {
 	BOOL success = YES;
     int index = 0;

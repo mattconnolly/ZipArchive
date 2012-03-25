@@ -16,6 +16,14 @@
 
 
 /**
+ a block that is called from UnzipFileTo:overwrite:withProgressBlock: where the percentage of
+ files processed (as an integer from 0 to 100), the number of files processed so far and the
+ total number of files in the archive is called after each file is processed.
+ */
+typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed, int numFiles);
+
+
+/**
     @protocol
     @discussion  methods for a delegate to receive error notifications and control overwriting of files
 */
@@ -85,10 +93,10 @@
 
 -(BOOL) UnzipOpenFile:(NSString*) zipFile;
 -(BOOL) UnzipOpenFile:(NSString*) zipFile Password:(NSString*) password;
+-(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite;
 -(BOOL) UnzipFileTo:(NSString*) path 
           overWrite:(BOOL) overwrite 
-  withProgressBlock:(void (^)(int percentage /* 0-100 */, int filesProcessed, int numFiles))progressBlock;
+  withProgressBlock:(ZipArchiveProgressUpdateBlock)progressBlock;
 -(BOOL) UnzipCloseFile;
 -(NSArray*) getZipFileContents;     // list the contents of the zip archive. must be called after UnzipOpenFile
-
 @end
