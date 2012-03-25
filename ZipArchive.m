@@ -236,6 +236,8 @@
  *
  * @param path    the directory where expanded files will be created
  * @param overwrite    should existing files be overwritten
+ * @param progressBlock a block that is called after each file is unzipped
+ *                      for updating progress.
  * @returns BOOL YES on success
  */
 
