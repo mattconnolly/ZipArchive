@@ -211,6 +211,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = ZipArchive;
 				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -226,6 +227,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = ZipArchive;
 				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
