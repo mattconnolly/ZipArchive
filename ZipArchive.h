@@ -64,6 +64,7 @@
 	zipFile		_zipFile;
 	unzFile		_unzFile;
 	
+    int         _numFiles;
 	NSString*   _password;
 	id			_delegate;
     
@@ -72,6 +73,7 @@
 
 /** a delegate object conforming to ZipArchiveDelegate protocol */
 @property (nonatomic, retain) id<ZipArchiveDelegate> delegate;
+@property (nonatomic, readonly) int numFiles;
 
 /** an array of files that were successfully expanded. Available after calling UnzipFileTo:overWrite: */
 @property (nonatomic, readonly) NSArray* unzippedFiles;
@@ -83,7 +85,9 @@
 
 -(BOOL) UnzipOpenFile:(NSString*) zipFile;
 -(BOOL) UnzipOpenFile:(NSString*) zipFile Password:(NSString*) password;
--(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite;
+-(BOOL) UnzipFileTo:(NSString*) path 
+          overWrite:(BOOL) overwrite 
+  withProgressBlock:(void (^)(int percentage /* 0-100 */, int filesProcessed, int numFiles))progressBlock;
 -(BOOL) UnzipCloseFile;
 -(NSArray*) getZipFileContents;     // list the contents of the zip archive. must be called after UnzipOpenFile
 

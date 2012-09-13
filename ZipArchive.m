@@ -30,6 +30,7 @@
 
 @implementation ZipArchive
 @synthesize delegate = _delegate;
+@synthesize numFiles = _numFiles;
 @synthesize password = _password;
 @synthesize unzippedFiles = _unzippedFiles;
 
@@ -203,7 +204,8 @@
 		unz_global_info  globalInfo = {0};
 		if( unzGetGlobalInfo(_unzFile, &globalInfo )==UNZ_OK )
 		{
-			NSLog(@"%d entries in the zip file", globalInfo.number_entry);
+            _numFiles = globalInfo.number_entry;
+			NSLog(@"%lu entries in the zip file", globalInfo.number_entry);
 		}
 	}
 	return _unzFile!=NULL;
@@ -237,9 +239,11 @@
  * @returns BOOL YES on success
  */
 
--(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite
+-(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite withProgressBlock:(void (^)(int percentage, int filesProcessed, int numFiles))progressBlock
 {
 	BOOL success = YES;
+    int index = 0;
+    int progress = -1;
 	int ret = unzGoToFirstFile( _unzFile );
 	unsigned char		buffer[4096] = {0};
 	NSFileManager* fman = [NSFileManager defaultManager];
@@ -247,7 +251,6 @@
 	{
 		[self OutputErrorMessage:@"Failed"];
 	}
-	
 	do{
 		if( [_password length]==0 )
 			ret = unzOpenCurrentFile( _unzFile );
@@ -347,6 +350,14 @@
 		}
 		unzCloseCurrentFile( _unzFile );
 		ret = unzGoToNextFile( _unzFile );
+        if (progressBlock && _numFiles) {
+            index++;
+            int p = index*100/_numFiles;
+            if (p!=progress) {
+                progress = p;
+                progressBlock(progress, index, _numFiles);
+            }
+        }
 	}while( ret==UNZ_OK && UNZ_OK!=UNZ_END_OF_LIST_OF_FILE );
 	return success;
 }
