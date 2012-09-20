@@ -9,7 +9,6 @@
 //
 */
 
-#import <UIKit/UIKit.h>
 
 #include "minizip/zip.h"
 #include "minizip/unzip.h"
