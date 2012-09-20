@@ -765,9 +765,9 @@ extern int ZEXPORT zipOpenNewFileInZip4 (file, filename, zipfi,
     zi->ci.flag = flagBase;
     if ((level==8) || (level==9))
       zi->ci.flag |= 2;
-    if ((level==2))
+    if (level==2)
       zi->ci.flag |= 4;
-    if ((level==1))
+    if (level==1)
       zi->ci.flag |= 6;
     if (password != NULL)
       zi->ci.flag |= 1;
