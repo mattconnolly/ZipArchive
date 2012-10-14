@@ -252,11 +252,14 @@
 	{
 		[self OutputErrorMessage:@"Failed"];
 	}
+    
+	const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
+	
 	do{
 		if( [_password length]==0 )
 			ret = unzOpenCurrentFile( _unzFile );
 		else
-			ret = unzOpenCurrentFilePassword( _unzFile, [_password cStringUsingEncoding:NSASCIIStringEncoding] );
+			ret = unzOpenCurrentFilePassword( _unzFile, password );
 		if( ret!=UNZ_OK )
 		{
 			[self OutputErrorMessage:@"Error occurs"];
@@ -397,11 +400,13 @@
         [self OutputErrorMessage:@"Failed"];
     }
     
+    const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
+    
     do{
         if( [_password length]==0 )
             ret = unzOpenCurrentFile( _unzFile );
         else
-            ret = unzOpenCurrentFilePassword( _unzFile, [_password cStringUsingEncoding:NSASCIIStringEncoding] );
+            ret = unzOpenCurrentFilePassword( _unzFile, password );
         if( ret!=UNZ_OK )
         {
             [self OutputErrorMessage:@"Error occured"];
