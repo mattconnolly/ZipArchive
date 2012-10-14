@@ -278,7 +278,7 @@
 			break;
 		}
 		char* filename = (char*) malloc( fileInfo.size_filename +1 );
-		unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
+		ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
 		filename[fileInfo.size_filename] = '\0';
 		
 		// check if it contains directory
@@ -297,32 +297,40 @@
 			[fman createDirectoryAtPath:fullPath withIntermediateDirectories:YES attributes:nil error:nil];
 		else
 			[fman createDirectoryAtPath:[fullPath stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:nil];
-		if( [fman fileExistsAtPath:fullPath] && !isDirectory && !overwrite )
+        
+		FILE* fp = NULL;
+        do
 		{
-			if( ![self OverWrite:fullPath] )
+			read = unzReadCurrentFile(_unzFile, buffer, 4096);
+			if (read >= 0)
 			{
-				unzCloseCurrentFile( _unzFile );
-				ret = unzGoToNextFile( _unzFile );
-				continue;
-			}
-		}
-		FILE* fp = fopen( (const char*)[fullPath UTF8String], "wb");
-		while( fp )
-		{
-			read=unzReadCurrentFile(_unzFile, buffer, 4096);
-			if( read > 0 )
-			{
+                if (fp == NULL) {
+                    if( [fman fileExistsAtPath:fullPath] && !isDirectory && !overwrite )
+                    {
+                        if( ![self OverWrite:fullPath] )
+                        {
+                            // don't process any more of the file, but continue
+                            break;
+//                            unzCloseCurrentFile( _unzFile );
+//                            ret = unzGoToNextFile( _unzFile );
+//                            continue;
+                        }
+                    }
+                    fp = fopen( (const char*)[fullPath UTF8String], "wb");
+                    if (fp == NULL) {
+                        [self OutputErrorMessage:@"Failed to open output file for writing"];
+                        break;
+                    }
+                }
 				fwrite(buffer, read, 1, fp );
 			}
-			else if( read<0 )
+			else // if (read < 0)
 			{
 				[self OutputErrorMessage:@"Failed to reading zip file"];
-				break;
 			}
-			else 
-				break;				
-		}
-		if( fp )
+		} while (read > 0);
+        
+		if (fp)
 		{
 			fclose( fp );
             
