@@ -10,9 +10,10 @@ Contributors
 Thanks to the following contributors to the Objective-C ZipArchive library:
 
 * acsolu
-* Matt Connolly
-* Edward Patel
+* Matt Connolly (@mattconnolly)
+* Edward Patel (@epatel)
 * kajinka13
+* David Keegan (@kgn)
 
 Special Thanks to the minizip authors:
 
