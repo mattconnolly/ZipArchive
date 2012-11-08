@@ -278,7 +278,7 @@
 			break;
 		}
 		char* filename = (char*) malloc( fileInfo.size_filename +1 );
-		ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
+        unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
 		filename[fileInfo.size_filename] = '\0';
 		
 		// check if it contains directory
@@ -399,7 +399,6 @@
 
 -(NSArray*) getZipFileContents     // list the contents of the zip archive. must be called after UnzipOpenFile
 {
-    BOOL success = YES;
     int ret = unzGoToFirstFile( _unzFile );
     NSMutableArray * allFilenames = [NSMutableArray arrayWithCapacity:40];
     
@@ -418,7 +417,6 @@
         if( ret!=UNZ_OK )
         {
             [self OutputErrorMessage:@"Error occured"];
-            success = NO;
             break;
         }
         
@@ -428,7 +426,6 @@
         if( ret!=UNZ_OK )
         {
             [self OutputErrorMessage:@"Error occurs while getting file info"];
-            success = NO;
             unzCloseCurrentFile( _unzFile );
             break;
         }
@@ -438,9 +435,6 @@
         
         // check if it contains directory
         NSString * strPath = [NSString stringWithCString:filename encoding:NSASCIIStringEncoding];
-        BOOL isDirectory = NO;
-        if( filename[fileInfo.size_filename-1]=='/' || filename[fileInfo.size_filename-1]=='\\')
-            isDirectory = YES;
         free( filename );
         if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
         {// contains a path
@@ -448,7 +442,7 @@
         }
         
         // Copy name to array
-        [allFilenames addObject:[strPath copy]];
+        [allFilenames addObject:strPath];
         
         unzCloseCurrentFile( _unzFile );
         ret = unzGoToNextFile( _unzFile );

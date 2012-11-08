@@ -615,6 +615,7 @@ extern zipFile ZEXPORT zipOpen2 (pathname, append, globalcomment, pzlib_filefunc
         if (err!=ZIP_OK)
         {
             ZCLOSE(ziinit.z_filefunc, ziinit.filestream);
+            free( zi );
             return NULL;
         }
 
@@ -1093,8 +1094,6 @@ extern int ZEXPORT zipCloseFileInZipRaw (file, uncompressed_size, crc32)
         uLong uTotalOutBefore;
         if (zi->ci.stream.avail_out == 0)
         {
-            if (zipFlushWriteBuffer(zi) == ZIP_ERRNO)
-                err = ZIP_ERRNO;
             zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
             zi->ci.stream.next_out = zi->ci.buffered_data;
         }
