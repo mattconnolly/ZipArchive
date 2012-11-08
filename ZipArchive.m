@@ -39,7 +39,7 @@
 {
 	if( self=[super init] )
 	{
-		_zipFile = NULL ;
+		_zipFile = NULL;
 	}
 	return self;
 }
@@ -311,9 +311,6 @@
                         {
                             // don't process any more of the file, but continue
                             break;
-//                            unzCloseCurrentFile( _unzFile );
-//                            ret = unzGoToNextFile( _unzFile );
-//                            continue;
                         }
                     }
                     fp = fopen( (const char*)[fullPath UTF8String], "wb");
@@ -326,6 +323,8 @@
 			}
 			else // if (read < 0)
 			{
+                ret = read; // result will be an error code
+                success = NO;
 				[self OutputErrorMessage:@"Failed to reading zip file"];
 			}
 		} while (read > 0);
@@ -360,15 +359,26 @@
 			}
 			
 		}
-		unzCloseCurrentFile( _unzFile );
-		ret = unzGoToNextFile( _unzFile );
+        
+        if (ret == UNZ_OK) {
+            ret = unzCloseCurrentFile( _unzFile );
+            if (ret != UNZ_OK) {
+                [self OutputErrorMessage:@"file was unzipped but failed crc check"];
+                success = NO;
+            }
+        }
+        
+        if (ret == UNZ_OK) {
+            ret = unzGoToNextFile( _unzFile );
+        }
+        
         if (_progressBlock && _numFiles) {
             index++;
             int p = index*100/_numFiles;
             progress = p;
             _progressBlock(progress, index, _numFiles);
         }
-	}while( ret==UNZ_OK && UNZ_OK!=UNZ_END_OF_LIST_OF_FILE );
+	} while (ret==UNZ_OK && UNZ_OK!=UNZ_END_OF_LIST_OF_FILE);
 	return success;
 }
 

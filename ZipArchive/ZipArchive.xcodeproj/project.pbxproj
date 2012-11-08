@@ -38,6 +38,12 @@
 		C908A968160AC26D000395DB /* ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = C9E8EBF8124F3D170047C862 /* ZipArchive.m */; };
 		C908A96A160AC26D000395DB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		C908A96B160AC26D000395DB /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9E8EBDB124F3CD70047C862 /* libz.dylib */; };
+		C99D6905164BCC7E00B6A7C3 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C99D6904164BCC7E00B6A7C3 /* SenTestingKit.framework */; };
+		C99D6907164BCC7E00B6A7C3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C99D6906164BCC7E00B6A7C3 /* Cocoa.framework */; };
+		C99D6911164BCC7E00B6A7C3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C99D690F164BCC7E00B6A7C3 /* InfoPlist.strings */; };
+		C99D6914164BCC7E00B6A7C3 /* tests.m in Sources */ = {isa = PBXBuildFile; fileRef = C99D6913164BCC7E00B6A7C3 /* tests.m */; };
+		C99D691E164BCCE900B6A7C3 /* libZipArchive-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C908A96F160AC26D000395DB /* libZipArchive-mac.a */; };
+		C99D6920164BCCF000B6A7C3 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C99D691F164BCCF000B6A7C3 /* libz.dylib */; };
 		C9E8EBDC124F3CD70047C862 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9E8EBDB124F3CD70047C862 /* libz.dylib */; };
 		C9E8EBED124F3D030047C862 /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E8EBE3124F3D030047C862 /* crypt.h */; };
 		C9E8EBEE124F3D030047C862 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = C9E8EBE4124F3D030047C862 /* ioapi.c */; };
@@ -53,6 +59,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		C99D691C164BCCE400B6A7C3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C908A95A160AC26D000395DB;
+			remoteInfo = "ZipArchive mac";
+		};
 		C9C36EFA160AC3C6005BED39 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -73,6 +86,18 @@
 		AA747D9E0F9514B9006C5449 /* ZipArchive_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipArchive_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		C908A96F160AC26D000395DB /* libZipArchive-mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libZipArchive-mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C99D6903164BCC7E00B6A7C3 /* tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = tests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C99D6904164BCC7E00B6A7C3 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		C99D6906164BCC7E00B6A7C3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		C99D6909164BCC7E00B6A7C3 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		C99D690A164BCC7E00B6A7C3 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		C99D690B164BCC7E00B6A7C3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		C99D690E164BCC7E00B6A7C3 /* tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "tests-Info.plist"; sourceTree = "<group>"; };
+		C99D6910164BCC7E00B6A7C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		C99D6912164BCC7E00B6A7C3 /* tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tests.h; sourceTree = "<group>"; };
+		C99D6913164BCC7E00B6A7C3 /* tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = tests.m; sourceTree = "<group>"; };
+		C99D6915164BCC7E00B6A7C3 /* tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "tests-Prefix.pch"; sourceTree = "<group>"; };
+		C99D691F164BCCF000B6A7C3 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
 		C9E8EBDB124F3CD70047C862 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		C9E8EBE3124F3D030047C862 /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
 		C9E8EBE4124F3D030047C862 /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
@@ -98,6 +123,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C99D68FF164BCC7E00B6A7C3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C99D6920164BCCF000B6A7C3 /* libz.dylib in Frameworks */,
+				C99D691E164BCCE900B6A7C3 /* libZipArchive-mac.a in Frameworks */,
+				C99D6905164BCC7E00B6A7C3 /* SenTestingKit.framework in Frameworks */,
+				C99D6907164BCC7E00B6A7C3 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2AAC07C0554694100DB518D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +151,7 @@
 			children = (
 				D2AAC07E0554694100DB518D /* libZipArchive-ios.a */,
 				C908A96F160AC26D000395DB /* libZipArchive-mac.a */,
+				C99D6903164BCC7E00B6A7C3 /* tests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -122,8 +159,10 @@
 		0867D691FE84028FC02AAC07 /* ZipArchive */ = {
 			isa = PBXGroup;
 			children = (
+				C99D691F164BCCF000B6A7C3 /* libz.dylib */,
 				08FB77AEFE84172EC02AAC07 /* Source */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
+				C99D690C164BCC7E00B6A7C3 /* tests */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
@@ -135,6 +174,9 @@
 			children = (
 				AACBBE490F95108600F1A2B1 /* Foundation.framework */,
 				C9E8EBDB124F3CD70047C862 /* libz.dylib */,
+				C99D6904164BCC7E00B6A7C3 /* SenTestingKit.framework */,
+				C99D6906164BCC7E00B6A7C3 /* Cocoa.framework */,
+				C99D6908164BCC7E00B6A7C3 /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -155,6 +197,36 @@
 				AA747D9E0F9514B9006C5449 /* ZipArchive_Prefix.pch */,
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		C99D6908164BCC7E00B6A7C3 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C99D6909164BCC7E00B6A7C3 /* AppKit.framework */,
+				C99D690A164BCC7E00B6A7C3 /* CoreData.framework */,
+				C99D690B164BCC7E00B6A7C3 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		C99D690C164BCC7E00B6A7C3 /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				C99D6912164BCC7E00B6A7C3 /* tests.h */,
+				C99D6913164BCC7E00B6A7C3 /* tests.m */,
+				C99D690D164BCC7E00B6A7C3 /* Supporting Files */,
+			);
+			path = tests;
+			sourceTree = "<group>";
+		};
+		C99D690D164BCC7E00B6A7C3 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				C99D690E164BCC7E00B6A7C3 /* tests-Info.plist */,
+				C99D690F164BCC7E00B6A7C3 /* InfoPlist.strings */,
+				C99D6915164BCC7E00B6A7C3 /* tests-Prefix.pch */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		C9E8EBE1124F3D030047C862 /* minizip */ = {
@@ -225,6 +297,25 @@
 			productReference = C908A96F160AC26D000395DB /* libZipArchive-mac.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		C99D6902164BCC7E00B6A7C3 /* tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C99D6918164BCC7E00B6A7C3 /* Build configuration list for PBXNativeTarget "tests" */;
+			buildPhases = (
+				C99D68FE164BCC7E00B6A7C3 /* Sources */,
+				C99D68FF164BCC7E00B6A7C3 /* Frameworks */,
+				C99D6900164BCC7E00B6A7C3 /* Resources */,
+				C99D6901164BCC7E00B6A7C3 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C99D691D164BCCE400B6A7C3 /* PBXTargetDependency */,
+			);
+			name = tests;
+			productName = tests;
+			productReference = C99D6903164BCC7E00B6A7C3 /* tests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 		D2AAC07D0554694100DB518D /* ZipArchive ios */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "ZipArchive ios" */;
@@ -259,6 +350,7 @@
 				Japanese,
 				French,
 				German,
+				en,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* ZipArchive */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -268,9 +360,37 @@
 				D2AAC07D0554694100DB518D /* ZipArchive ios */,
 				C908A95A160AC26D000395DB /* ZipArchive mac */,
 				C9C36EF6160AC3C0005BED39 /* ZipArchive */,
+				C99D6902164BCC7E00B6A7C3 /* tests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C99D6900164BCC7E00B6A7C3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C99D6911164BCC7E00B6A7C3 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C99D6901164BCC7E00B6A7C3 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C908A963160AC26D000395DB /* Sources */ = {
@@ -282,6 +402,14 @@
 				C908A966160AC26D000395DB /* unzip.c in Sources */,
 				C908A967160AC26D000395DB /* zip.c in Sources */,
 				C908A968160AC26D000395DB /* ZipArchive.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C99D68FE164BCC7E00B6A7C3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C99D6914164BCC7E00B6A7C3 /* tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,6 +428,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		C99D691D164BCCE400B6A7C3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C908A95A160AC26D000395DB /* ZipArchive mac */;
+			targetProxy = C99D691C164BCCE400B6A7C3 /* PBXContainerItemProxy */;
+		};
 		C9C36EFB160AC3C6005BED39 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D2AAC07D0554694100DB518D /* ZipArchive ios */;
@@ -311,6 +444,17 @@
 			targetProxy = C9C36EFC160AC3C9005BED39 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C99D690F164BCC7E00B6A7C3 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C99D6910164BCC7E00B6A7C3 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB921F08733DC00010E9CD /* Debug */ = {
@@ -351,9 +495,10 @@
 		1DEB922308733DC00010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -363,6 +508,7 @@
 		1DEB922408733DC00010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -376,13 +522,13 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DSTROOT = /tmp/ZipArchive.dst;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ZipArchive_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "ZipArchive-mac";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -394,14 +540,75 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DSTROOT = /tmp/ZipArchive.dst;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ZipArchive_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = "ZipArchive-mac";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		C99D6916164BCC7E00B6A7C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "tests/tests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "tests/tests-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		C99D6917164BCC7E00B6A7C3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "tests/tests-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "tests/tests-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -445,6 +652,15 @@
 			buildConfigurations = (
 				C908A96D160AC26D000395DB /* Debug */,
 				C908A96E160AC26D000395DB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C99D6918164BCC7E00B6A7C3 /* Build configuration list for PBXNativeTarget "tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C99D6916164BCC7E00B6A7C3 /* Debug */,
+				C99D6917164BCC7E00B6A7C3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
