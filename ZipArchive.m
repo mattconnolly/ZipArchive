@@ -103,7 +103,7 @@
 	time_t current;
 	time( &current );
 	
-	zip_fileinfo zipInfo = {0};
+	zip_fileinfo zipInfo = {{0}};
 	zipInfo.dosDate = (unsigned long) current;
 	
     NSError* error = nil;
