@@ -327,7 +327,7 @@
 			{
                 ret = read; // result will be an error code
                 success = NO;
-				[self OutputErrorMessage:@"Failed to reading zip file"];
+				[self OutputErrorMessage:@"Failed to read zip file"];
 			}
 		} while (read > 0);
         
