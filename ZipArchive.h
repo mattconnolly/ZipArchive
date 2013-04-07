@@ -10,8 +10,6 @@
 */
 
 
-#include "minizip/zip.h"
-#include "minizip/unzip.h"
 
 
 /**
@@ -67,8 +65,8 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 
 @interface ZipArchive : NSObject {
 @private
-	zipFile		_zipFile;
-	unzFile		_unzFile;
+	void*		_zipFile;
+	void*		_unzFile;
 	
     int         _numFiles;
 	NSString*   _password;
