@@ -2,9 +2,10 @@
 
 ## Version 1.1.1
 
-15 May 2013
+3 June 2013
 
 * Added autoreleasepool to unzip for better memory performance (@Wert1go)
+* Added support for user specific NSFileManager (@namenu)
 
 ## Version 1.1.0
 

@@ -15,6 +15,7 @@ Thanks to the following contributors to the Objective-C ZipArchive library:
 * kajinka13
 * David Keegan (@kgn)
 * Yuri (@Wert1go)
+* Hyunwoo Nam (@namenu)
 
 Special Thanks to the minizip authors:
 

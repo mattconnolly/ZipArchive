@@ -10,7 +10,7 @@ It can be used for iPhone application development, and cocoa on Mac OSX as well.
   s.homepage     = "https://github.com/mattconnolly/ZipArchive"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.author       = { "Unknown Name" => "acsolu@gmail.com", "Matt Connolly" => "matt.connolly@me.com" }
-  s.source       = { :git => 'https://github.com/mattconnolly/ZipArchive.git', :tag => '1.1.0' }
+  s.source       = { :git => 'https://github.com/mattconnolly/ZipArchive.git', :tag => '1.1.1' }
   s.source_files = '*.{h,m}', 'minizip/*.{h,c}'
   s.public_header_files = '*.h'
   s.library   = 'z'
