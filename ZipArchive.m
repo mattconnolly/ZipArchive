@@ -39,9 +39,15 @@
 
 -(id) init
 {
+    return [self initWithFileManager:[NSFileManager defaultManager]];
+}
+
+-(id) initWithFileManager:(NSFileManager*) fileManager
+{
 	if( self=[super init] )
 	{
 		_zipFile = NULL;
+        _fileManager = fileManager;
 	}
 	return self;
 }
@@ -109,7 +115,7 @@
 	zipInfo.dosDate = (unsigned long) current;
 	
     NSError* error = nil;
-	NSDictionary* attr = [[NSFileManager defaultManager] _attributesOfItemAtPath:file followingSymLinks:YES error:&error];
+	NSDictionary* attr = [_fileManager _attributesOfItemAtPath:file followingSymLinks:YES error:&error];
 	if( attr )
 	{
 		NSDate* fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
@@ -249,7 +255,6 @@
     int progress = -1;
 	int ret = unzGoToFirstFile( _unzFile );
 	unsigned char		buffer[4096] = {0};
-	NSFileManager* fman = [NSFileManager defaultManager];
 	if( ret!=UNZ_OK )
 	{
 		[self OutputErrorMessage:@"Failed"];
@@ -297,9 +302,9 @@
             NSString* fullPath = [path stringByAppendingPathComponent:strPath];
             
             if( isDirectory )
-                [fman createDirectoryAtPath:fullPath withIntermediateDirectories:YES attributes:nil error:nil];
+                [_fileManager createDirectoryAtPath:fullPath withIntermediateDirectories:YES attributes:nil error:nil];
             else
-                [fman createDirectoryAtPath:[fullPath stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:nil];
+                [_fileManager createDirectoryAtPath:[fullPath stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:nil];
             
             FILE* fp = NULL;
             do
@@ -308,7 +313,7 @@
                 if (read >= 0)
                 {
                     if (fp == NULL) {
-                        if( [fman fileExistsAtPath:fullPath] && !isDirectory && !overwrite )
+                        if( [_fileManager fileExistsAtPath:fullPath] && !isDirectory && !overwrite )
                         {
                             if( ![self OverWrite:fullPath] )
                             {
@@ -346,11 +351,11 @@
                                        initWithTimeInterval:(NSTimeInterval)fileInfo.dosDate
                                        sinceDate:[self Date1980] ];
                     
-                    NSDictionary* attr = [NSDictionary dictionaryWithObject:orgDate forKey:NSFileModificationDate]; //[[NSFileManager defaultManager] fileAttributesAtPath:fullPath traverseLink:YES];
+                    NSDictionary* attr = [NSDictionary dictionaryWithObject:orgDate forKey:NSFileModificationDate]; //[_fileManager fileAttributesAtPath:fullPath traverseLink:YES];
                     if( attr )
                     {
                         //	[attr  setValue:orgDate forKey:NSFileCreationDate];
-                        if( ![[NSFileManager defaultManager] setAttributes:attr ofItemAtPath:fullPath error:nil] )
+                        if( ![_fileManager setAttributes:attr ofItemAtPath:fullPath error:nil] )
                         {
                             // cann't set attributes 
                             NSLog(@"Failed to set attributes");
