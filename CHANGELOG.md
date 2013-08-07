@@ -5,7 +5,7 @@
 7 August 2013
 
 * Fixes bug with folders in zipfiles. Pull request #20 (@lanbozhang)
-* Adds "stringEncoding" property for specifying what character encoding to use for interpreting file names inside a zip file.
+* Adds "stringEncoding" property for specifying what character encoding to use for interpreting file names inside a zip file. This is used for reading and writing zip files. This now defaults to UTF8, it was previously ASCII.
 
 ## Version 1.1.1
 
