@@ -36,6 +36,7 @@
 @synthesize password = _password;
 @synthesize unzippedFiles = _unzippedFiles;
 @synthesize progressBlock = _progressBlock;
+@synthesize stringEncoding = _stringEncoding;
 
 -(id) init
 {
@@ -48,6 +49,7 @@
 	{
 		_zipFile = NULL;
         _fileManager = fileManager;
+        self.stringEncoding = NSUTF8StringEncoding;
 	}
 	return self;
 }
@@ -130,7 +132,7 @@
 	if( [_password length] == 0 )
 	{
 		ret = zipOpenNewFileInZip( _zipFile,
-								  (const char*) [newname UTF8String],
+								  (const char*) [newname cStringUsingEncoding:self.stringEncoding],
 								  &zipInfo,
 								  NULL,0,
 								  NULL,0,
@@ -144,7 +146,7 @@
 		uLong crcValue = crc32( 0L,NULL, 0L );
 		crcValue = crc32( crcValue, (const Bytef*)[data bytes], [data length] );
 		ret = zipOpenNewFileInZip3( _zipFile,
-								  (const char*) [newname UTF8String],
+								  (const char*) [newname cStringUsingEncoding:self.stringEncoding],
 								  &zipInfo,
 								  NULL,0,
 								  NULL,0,
@@ -290,7 +292,7 @@
             filename[fileInfo.size_filename] = '\0';
             
             // check if it contains directory
-            NSString * strPath = [NSString stringWithCString:filename encoding:NSASCIIStringEncoding];
+            NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
             BOOL isDirectory = NO;
             if( filename[fileInfo.size_filename-1]=='/' || filename[fileInfo.size_filename-1]=='\\')
                 isDirectory = YES;

@@ -1,5 +1,12 @@
 # ZipArchive change log
 
+## Version 1.2.0
+
+7 August 2013
+
+* Fixes bug with folders in zipfiles. Pull request #20 (@lanbozhang)
+* Adds "stringEncoding" property for specifying what character encoding to use for interpreting file names inside a zip file.
+
 ## Version 1.1.1
 
 3 June 2013

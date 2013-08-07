@@ -76,12 +76,18 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
     NSArray*    _unzippedFiles;
     
     NSFileManager* _fileManager;
+    NSStringEncoding _stringEncoding;
 }
 
 /** a delegate object conforming to ZipArchiveDelegate protocol */
 @property (nonatomic, retain) id<ZipArchiveDelegate> delegate;
 @property (nonatomic, readonly) int numFiles;
 @property (nonatomic, copy) ZipArchiveProgressUpdateBlock progressBlock;
+
+/**
+    @brief      String encoding to be used when interpreting file names in the zip file.
+*/
+@property (nonatomic, assign) NSStringEncoding stringEncoding;
 
 /** an array of files that were successfully expanded. Available after calling UnzipFileTo:overWrite: */
 @property (nonatomic, readonly) NSArray* unzippedFiles;
