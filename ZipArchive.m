@@ -321,10 +321,12 @@
                                 break;
                             }
                         }
-                        fp = fopen( (const char*)[fullPath UTF8String], "wb");
-                        if (fp == NULL) {
-                            [self OutputErrorMessage:@"Failed to open output file for writing"];
-                            break;
+                        if (!isDirectory) {
+                            fp = fopen( (const char*)[fullPath UTF8String], "wb");
+                            if (fp == NULL) {
+                                [self OutputErrorMessage:@"Failed to open output file for writing"];
+                                break;
+                            }
                         }
                     }
                     fwrite(buffer, read, 1, fp );
