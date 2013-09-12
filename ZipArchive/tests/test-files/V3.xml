@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<STProfile version="3.0" title="V3" height="768" width="1024">
+  <STButton name="A" systeminfo="WIN" title="A" width="60" height="60" background_up="csg_w_combine_00" background_down="csg_w_combine_00" foreground_up="" foreground_down="" BGColor="0" gravity="LEFT_TOP" margin_left="20" margin_top="250" margin_right="0" margin_bottom="0" repeat="NO" toggle="NO" trigger="">
+    <STAction>
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_A"></STActionEvent>
+    </STAction>
+  </STButton>
+  <STButton name="Shift+B" systeminfo="WIN" title="B" width="60" height="60" background_up="csg_w_combine_09" background_down="csg_w_combine_09" foreground_up="" foreground_down="" BGColor="0" gravity="LEFT_TOP" margin_left="90" margin_top="250" margin_right="0" margin_bottom="0" repeat="NO" toggle="NO" trigger="">
+    <STAction>
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_LEFT_SHIFT"></STActionEvent>
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_B"></STActionEvent>
+    </STAction>
+  </STButton>
+  <STButton name="Ctrl+C" systeminfo="WIN" title="" width="60" height="60" background_up="csg_w_combine_00" background_down="csg_w_combine_00" foreground_up="csg_icon_copy" foreground_down="csg_icon_copy" BGColor="0" gravity="LEFT_TOP" margin_left="160" margin_top="250" margin_right="0" margin_bottom="0" repeat="NO" toggle="NO" trigger="">
+    <STAction>
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_LEFT_CTRL"></STActionEvent>
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_C"></STActionEvent>
+    </STAction>
+  </STButton>
+  <STButton name="D" systeminfo="WIN" title="D" width="60" height="60" background_up="csg_w_combine_00" background_down="csg_w_combine_00" foreground_up="" foreground_down="" BGColor="1" gravity="LEFT_TOP" margin_left="230" margin_top="250" margin_right="0" margin_bottom="0" repeat="YES" toggle="NO" trigger="">
+    <STAction>
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_D"></STActionEvent>
+    </STAction>
+  </STButton>
+  <STButton name="Mouse Left Click" systeminfo="" title="M_LEFT" width="80" height="80" background_up="csg_w_combine_00" background_down="csg_w_combine_00" foreground_up="csg_mouse_left" foreground_down="csg_mouse_left" BGColor="0" gravity="LEFT_TOP" margin_left="310" margin_top="230" margin_right="0" margin_bottom="0" repeat="NO" toggle="NO" trigger="">
+    <STAction>
+      <STActionEvent type="MouseEvent" mouse_code="LEFT_BUTTON_CLICK" mouse_x="0" mouse_y="0" special_event_data1="0x00000000" special_event_data2="0x00000000"></STActionEvent>
+    </STAction>
+  </STButton>
+  <STButton name="Mouse Middle Click" systeminfo="" title="M_MIDDLE" width="80" height="80" background_up="csg_w_combine_00" background_down="csg_w_combine_00" foreground_up="csg_mouse_middle" foreground_down="csg_mouse_middle" BGColor="0" gravity="LEFT_TOP" margin_left="310" margin_top="330" margin_right="0" margin_bottom="0" repeat="NO" toggle="NO" trigger="">
+    <STAction>
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_LEFT_CTRL"></STActionEvent>
+      <STActionEvent type="MouseEvent" mouse_code="MIDDLE_BUTTON_CLICK" mouse_x="0" mouse_y="0" special_event_data1="0x00000000" special_event_data2="0x00000000"></STActionEvent>
+    </STAction>
+  </STButton>
+  <STButton name="Mouse Right Click" systeminfo="" title="M_RIGHT" width="80" height="80" background_up="csg_w_combine_00" background_down="csg_w_combine_00" foreground_up="csg_mouse_right" foreground_down="csg_mouse_right" BGColor="1" gravity="LEFT_TOP" margin_left="310" margin_top="430" margin_right="0" margin_bottom="0" repeat="YES" toggle="NO" trigger="">
+    <STAction>
+      <STActionEvent type="MouseEvent" mouse_code="RIGHT_BUTTON_CLICK" mouse_x="0" mouse_y="0" special_event_data1="0x00000000" special_event_data2="0x00000000"></STActionEvent>
+    </STAction>
+  </STButton>
+  <STJoystick name="Gamepad" background_up="csg_joystick_4way_base_blue" background_down="" foreground_up="csg_joystick_nub" foreground_down="" mode="P4" gravity="LEFT_TOP" margin_left="710" margin_top="380" margin_right="0" margin_bottom="0" width="250" height="250" repeat="YES" pad_radius="125.0" nub_radius="59.0" nub_movable_min_radius="20.0" nub_movable_max_radius="125.0" touch_valid_radius="115.0">
+    <STAction region_id="1">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_UP"></STActionEvent>
+    </STAction>
+    <STAction region_id="3">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_RIGHT"></STActionEvent>
+    </STAction>
+    <STAction region_id="5">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_DOWN"></STActionEvent>
+    </STAction>
+    <STAction region_id="7">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_LEFT"></STActionEvent>
+    </STAction>
+  </STJoystick>
+  <STJoystick name="Gamepad" background_up="csg_joystick_8way_base_gray" background_down="" foreground_up="csg_joystick_nub" foreground_down="" mode="P4TO8" gravity="LEFT_TOP" margin_left="420" margin_top="460" margin_right="0" margin_bottom="0" width="250" height="250" repeat="YES" pad_radius="125.0" nub_radius="59.0" nub_movable_min_radius="20.0" nub_movable_max_radius="125.0" touch_valid_radius="115.0">
+    <STAction region_id="1">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_UP"></STActionEvent>
+    </STAction>
+    <STAction region_id="3">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_RIGHT"></STActionEvent>
+    </STAction>
+    <STAction region_id="5">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_DOWN"></STActionEvent>
+    </STAction>
+    <STAction region_id="7">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_LEFT"></STActionEvent>
+    </STAction>
+  </STJoystick>
+  <STJoystick name="Gamepad" background_up="csg_joystick_8way_base_gray" background_down="" foreground_up="csg_joystick_nub" foreground_down="" mode="P4TO8" gravity="LEFT_TOP" margin_left="710" margin_top="120" margin_right="0" margin_bottom="0" width="250" height="250" repeat="YES" pad_radius="125.0" nub_radius="59.0" nub_movable_min_radius="20.0" nub_movable_max_radius="125.0" touch_valid_radius="115.0">
+    <STAction region_id="1">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_A"></STActionEvent>
+    </STAction>
+    <STAction region_id="3">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_B"></STActionEvent>
+    </STAction>
+    <STAction region_id="5">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_C"></STActionEvent>
+    </STAction>
+    <STAction region_id="7">
+      <STActionEvent type="KeyboardEvent" key_code="KEYCODE_D"></STActionEvent>
+    </STAction>
+  </STJoystick>
+  <STScrollBar name="Scroll Bar" gravity="LEFT_TOP" margin_left="230" margin_top="50" margin_right="0" margin_bottom="0" width="53" height="210" sensitivity="5.000000" background_up="csg_scrollbar_gray" foreground_up=""></STScrollBar>
+  <STScrollWheel name="Scroll Wheel" gravity="LEFT_TOP" margin_left="20" margin_top="90" margin_right="0" margin_bottom="0" width="50" height="150" sensitivity="10.000000" background_up="csg_scrollwheel_blue"></STScrollWheel>
+  <STTrackPoint name="Pointing Stick" background_up="csg_trackpoint_base" background_down="" foreground_up="csg_trackpoint_blue" foreground_down="csg_trackpoint_blue" mode="P4TO8" tpmode="0" gravity="LEFT_TOP" margin_left="320" margin_top="540" margin_right="0" margin_bottom="0" width="60" height="60" repeat="YES" sensitivity="1.560942" pad_radius="125.0" nub_radius="59.0" nub_movable_min_radius="20.0" nub_movable_max_radius="20.0" touch_valid_radius="20.0"></STTrackPoint>
+  <STNumericKeypad name="Numeric Keypad" gravity="LEFT_TOP" margin_left="10" margin_top="320" margin_right="0" margin_bottom="0" width="290" height="360" background_up="csg_numerickeypad_base_blue"></STNumericKeypad>
+</STProfile>
