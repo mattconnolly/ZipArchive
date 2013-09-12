@@ -68,9 +68,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef NOUNCRYPT
-        #define NOUNCRYPT
-#endif
+// Matt Connolly 2013-09-12: this was defined in minizip 1.1.
+// @see http://www.winimage.com/zLibDll/minizip.html
+// Defining it defeats the ability to unzip password protected zip files, so this
+// is commented out so that existing tests pass.
+
+//#ifndef NOUNCRYPT
+//        #define NOUNCRYPT
+//#endif
 
 #include "zlib.h"
 #include "unzip.h"
