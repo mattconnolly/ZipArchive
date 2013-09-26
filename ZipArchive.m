@@ -208,6 +208,43 @@
     }
 }
 
+// 2010-12-22, Michael Burford (michael@burford.net)
+// 2013-09-25, Altered by Javin Elliff to add folder names and maintain initial prefix.
+// "pathPrefix" should be nil or @"" the first call; lets the recursive calls store in subfolders in the zip file.
+-(NSInteger) addFolderToZip:(NSString*)path pathPrefix:(NSString*)prefix
+{
+	NSInteger	fileCount = 0;
+	NSArray		*dirArray = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
+	
+    if( prefix == nil )
+        prefix = [path lastPathComponent];
+    else
+        prefix = [prefix stringByAppendingPathComponent:[path lastPathComponent]];
+    
+    [self addFileToZip:path newname:[prefix stringByAppendingString:@"/"]];
+    
+	for (int i=0; i<[dirArray count]; i++)
+    {
+		NSString		*dirItem = [dirArray objectAtIndex:i];
+		NSDictionary	*dict = [[NSFileManager defaultManager] attributesOfItemAtPath:[path stringByAppendingPathComponent:dirItem] error:nil];
+		
+		if ([[dict fileType] isEqualToString:NSFileTypeDirectory] || [[dict fileType] isEqualToString:NSFileTypeSymbolicLink])
+		{
+			//Recursively do subfolders.
+			fileCount += [self addFolderToZip:[path stringByAppendingPathComponent:dirItem] pathPrefix:prefix];
+		}
+		else
+		{
+			//Count if added OK.
+			if ([self addFileToZip:[path stringByAppendingPathComponent:dirItem] newname:([prefix length]>0 ? [prefix stringByAppendingPathComponent:dirItem] : dirItem)])
+            {
+				fileCount++;
+			}
+		}
+	}
+	return fileCount;
+}
+
 /**
  * Close a zip file after creating and added files to it.
  *
