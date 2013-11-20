@@ -15,4 +15,5 @@ It can be used for iPhone application development, and cocoa on Mac OSX as well.
   s.public_header_files = '*.h'
   s.library   = 'z'
   s.requires_arc = false
+  s.compiler_flags = '-Dunix'
 end
