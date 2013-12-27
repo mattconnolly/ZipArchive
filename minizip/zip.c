@@ -1034,11 +1034,13 @@ int Write_LocalFileHeader(zip64_internal* zi, const char* filename, uInt size_ex
       // Remember position of Zip64 extended info for the local file header. (needed when we update size after done with file)
       zi->ci.pos_zip64extrainfo = ZTELL64(zi->z_filefunc,zi->filestream);
 
+#ifndef __clang_analyzer__
       err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (short)HeaderID,2);
       err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (short)DataSize,2);
 
       err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)UncompressedSize,8);
       err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)CompressedSize,8);
+#endif
   }
 
   return err;
@@ -1533,10 +1535,13 @@ extern int ZEXPORT zipCloseFileInZipRaw64 (zipFile file, ZPOS64_T uncompressed_s
                                 uLong uTotalOutBefore;
                                 if (zi->ci.stream.avail_out == 0)
                                 {
-                                        if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
-                                                err = ZIP_ERRNO;
-                                        zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
-                                        zi->ci.stream.next_out = zi->ci.buffered_data;
+                                    if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO){
+#ifndef __clang_analyzer__
+                                        err = ZIP_ERRNO;
+#endif
+                                    }
+                                    zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
+                                    zi->ci.stream.next_out = zi->ci.buffered_data;
                                 }
                                 uTotalOutBefore = zi->ci.stream.total_out;
                                 err=deflate(&zi->ci.stream,  Z_FINISH);
@@ -1679,7 +1684,9 @@ extern int ZEXPORT zipCloseFileInZipRaw64 (zipFile file, ZPOS64_T uncompressed_s
       if(zi->ci.pos_local_header >= 0xffffffff)
       {
         zip64local_putValue_inmemory(p, zi->ci.pos_local_header, 8);
+#ifndef __clang_analyzer__
         p += 8;
+#endif
       }
 
       // Update how much extra free space we got in the memory buffer

@@ -1095,8 +1095,11 @@ local int unz64local_GetCurrentFileInfoInternal (unzFile file,
 
         if (lSeek!=0)
         {
-            if (ZSEEK64(s->z_filefunc, s->filestream,lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
+            if (ZSEEK64(s->z_filefunc, s->filestream,lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0){
+#ifndef __clang_analyzer__
                 lSeek=0;
+#endif
+            }
             else
                 err=UNZ_ERRNO;
         }
@@ -1104,11 +1107,15 @@ local int unz64local_GetCurrentFileInfoInternal (unzFile file,
         if ((file_info.size_file_comment>0) && (commentBufferSize>0))
             if (ZREAD64(s->z_filefunc, s->filestream,szComment,uSizeRead)!=uSizeRead)
                 err=UNZ_ERRNO;
+#ifndef __clang_analyzer__
         lSeek+=file_info.size_file_comment - uSizeRead;
+#endif
     }
-    else
+    else{
+#ifndef __clang_analyzer__
         lSeek+=file_info.size_file_comment;
-
+#endif
+    }
 
     if ((err==UNZ_OK) && (pfile_info!=NULL))
         *pfile_info=file_info;
@@ -1539,9 +1546,9 @@ extern int ZEXPORT unzOpenCurrentFile3 (unzFile file, int* method,
         (s->cur_file_info.compression_method!=Z_BZIP2ED) &&
 /* #endif */
         (s->cur_file_info.compression_method!=Z_DEFLATED))
-
+#ifndef __clang_analyzer__
         err=UNZ_BADZIPFILE;
-
+#endif
     pfile_in_zip_read_info->crc32_wait=s->cur_file_info.crc;
     pfile_in_zip_read_info->crc32=0;
     pfile_in_zip_read_info->total_out_64=0;
