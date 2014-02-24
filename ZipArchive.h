@@ -17,7 +17,7 @@
  files processed (as an integer from 0 to 100), the number of files processed so far and the
  total number of files in the archive is called after each file is processed.
  */
-typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed, int numFiles);
+typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed, unsigned long numFiles);
 	
 /**
     @protocol
@@ -65,12 +65,12 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 
 @interface ZipArchive : NSObject {
 @private
-	void*		_zipFile;
-	void*		_unzFile;
+	void*           _zipFile;
+	void*           _unzFile;
 	
-    int         _numFiles;
-	NSString*   _password;
-	id			_delegate;
+    unsigned long   _numFiles;
+	NSString*       _password;
+	id              _delegate;
     ZipArchiveProgressUpdateBlock _progressBlock;
     
     NSArray*    _unzippedFiles;
@@ -81,7 +81,7 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 
 /** a delegate object conforming to ZipArchiveDelegate protocol */
 @property (nonatomic, retain) id<ZipArchiveDelegate> delegate;
-@property (nonatomic, readonly) int numFiles;
+@property (nonatomic, readonly) unsigned long numFiles;
 @property (nonatomic, copy) ZipArchiveProgressUpdateBlock progressBlock;
 
 /**
