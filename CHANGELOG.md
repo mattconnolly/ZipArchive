@@ -1,5 +1,13 @@
 # ZipArchive change log
 
+## Version 1.3.0
+
+10 July 2014
+
+* fixes modification date is stored in wrong format. (@danielmatzke)
+* updated several types for osx Compatibility. (@OpenFibers)
+* Xcode 5 upgrade recommendations (Ryan Punt)
+
 ## Version 1.2.0
 
 7 August 2013
