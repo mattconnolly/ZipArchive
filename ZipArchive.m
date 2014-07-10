@@ -110,22 +110,32 @@
 	if( !_zipFile )
 		return NO;
 //	tm_zip filetime;
-	time_t current;
-	time( &current );
 	
 	zip_fileinfo zipInfo = {{0}};
-	zipInfo.dosDate = (unsigned long) current;
-	
+
+	NSDate* fileDate = nil;
+    
     NSError* error = nil;
 	NSDictionary* attr = [_fileManager _attributesOfItemAtPath:file followingSymLinks:YES error:&error];
 	if( attr )
-	{
-		NSDate* fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
-		if( fileDate )
-		{
-			zipInfo.dosDate = [fileDate timeIntervalSinceDate:[self Date1980] ];
-		}
-	}
+		fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
+
+	if( fileDate == nil )
+        fileDate = [NSDate date];
+
+    
+    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDateComponents* components = [gregorianCalendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay |
+                                    NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:fileDate];
+    [gregorianCalendar release];
+    
+    zipInfo.tmz_date.tm_sec = (uInt)components.second;
+    zipInfo.tmz_date.tm_min = (uInt)components.minute;
+    zipInfo.tmz_date.tm_hour = (uInt)components.hour;
+    zipInfo.tmz_date.tm_mday = (uInt)components.day;
+    zipInfo.tmz_date.tm_mon = (uInt)components.month;
+    zipInfo.tmz_date.tm_year = (uInt)components.year;
+    
 	
 	int ret ;
 	NSData* data = nil;
@@ -349,11 +359,20 @@
                 [(NSMutableArray*)_unzippedFiles addObject:fullPath];
                 
                 // set the orignal datetime property
-                if( fileInfo.dosDate!=0 )
+                if( fileInfo.tmu_date.tm_year!=0 )
                 {
-                    NSDate* orgDate = [[NSDate alloc]
-                                       initWithTimeInterval:(NSTimeInterval)fileInfo.dosDate
-                                       sinceDate:[self Date1980] ];
+                    NSDateComponents* components = [[NSDateComponents alloc] init];
+                    components.second = fileInfo.tmu_date.tm_sec;
+                    components.minute = fileInfo.tmu_date.tm_min;
+                    components.hour = fileInfo.tmu_date.tm_hour;
+                    components.day = fileInfo.tmu_date.tm_mday;
+                    components.month = fileInfo.tmu_date.tm_mon;
+                    components.year = fileInfo.tmu_date.tm_year;
+                    
+                    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+                    NSDate* orgDate = [[gregorianCalendar dateFromComponents:components] retain];
+                    [components release];
+                    [gregorianCalendar release];
                     
                     NSDictionary* attr = [NSDictionary dictionaryWithObject:orgDate forKey:NSFileModificationDate]; //[_fileManager fileAttributesAtPath:fullPath traverseLink:YES];
                     if( attr )
