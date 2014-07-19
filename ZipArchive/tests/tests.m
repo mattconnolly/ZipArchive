@@ -152,7 +152,9 @@ const NSUInteger NUM_FILES = 10;
     NSMutableArray* files = [NSMutableArray arrayWithCapacity:count];
     char buffer[1024];
     for (int i = 0; i < count; i++) {
-        const char* tempName = tempnam("/tmp", "ziptest");
+        char tempName[1000];
+        strcpy(tempName, "/tmp/ziptest-XXXXXXXX");
+        mkstemp(tempName);
         FILE* fp = fopen(tempName, "wb");
         if (fp) {
             int len = arc4random() % 1000;
@@ -173,7 +175,9 @@ const NSUInteger NUM_FILES = 10;
 - (NSString*) createZipArchiveWithFiles:(NSArray*)files andPassword:(NSString*)password
 {
     ZipArchive* zip = [[ZipArchive alloc] init];
-    const char* tempName = tempnam("/tmp", "ziparchive");
+    char tempName[1000];
+    strcpy(tempName, "/tmp/ziptest-XXXXXXXX");
+    mkstemp(tempName);
     BOOL ok;
     NSString* zipPath = [NSString stringWithFormat:@"%s.zip", tempName];
     if (password && password.length > 0) {
