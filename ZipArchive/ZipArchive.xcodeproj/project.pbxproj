@@ -50,7 +50,6 @@
 		C95AB38417E1C49400120861 /* tests.m in Sources */ = {isa = PBXBuildFile; fileRef = C99D6913164BCC7E00B6A7C3 /* tests.m */; };
 		C95AB38517E1C50900120861 /* libZipArchive-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C908A96F160AC26D000395DB /* libZipArchive-mac.a */; };
 		C95AB38617E1C50900120861 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9E8EBDB124F3CD70047C862 /* libz.dylib */; };
-		C9E8EBDC124F3CD70047C862 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9E8EBDB124F3CD70047C862 /* libz.dylib */; };
 		C9E8EBED124F3D030047C862 /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E8EBE3124F3D030047C862 /* crypt.h */; };
 		C9E8EBEE124F3D030047C862 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = C9E8EBE4124F3D030047C862 /* ioapi.c */; };
 		C9E8EBEF124F3D030047C862 /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E8EBE5124F3D030047C862 /* ioapi.h */; };
@@ -175,7 +174,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
-				C9E8EBDC124F3CD70047C862 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
