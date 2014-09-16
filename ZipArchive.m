@@ -9,8 +9,8 @@
 */
 
 #import "ZipArchive.h"
-#import "zlib.h"
-#import "zconf.h"
+#import <zlib.h>
+#import <zconf.h>
 #include "minizip/zip.h"
 #include "minizip/unzip.h"
 
