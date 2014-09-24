@@ -349,7 +349,7 @@
                     }
                     fwrite(buffer, read, 1, fp );
 					
-					// Send message to delegate about number if bytes written out
+					// Send message to delegate about number of bytes written out
 					if ([_delegate respondsToSelector:@selector(zipArchive:uncompressedBytesWritten:)]) {
 						[_delegate zipArchive:self uncompressedBytesWritten:read];
 					}
