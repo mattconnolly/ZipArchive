@@ -9,8 +9,8 @@
 */
 
 #import "ZipArchive.h"
-#import <zlib.h>
-#import <zconf.h>
+#import "zlib.h"
+#import "zconf.h"
 #include "minizip/zip.h"
 #include "minizip/unzip.h"
 
@@ -317,7 +317,13 @@
                 [_fileManager createDirectoryAtPath:fullPath withIntermediateDirectories:YES attributes:nil error:nil];
             else
                 [_fileManager createDirectoryAtPath:[fullPath stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:nil];
-            
+			
+			// Send message to delegate about the file we're about to decompress
+			index++;
+			if ([_delegate respondsToSelector:@selector(zipArchive:willBeginToDecompressFile:number:of:withTotalUncompressedBytes:)]) {
+				[_delegate zipArchive:self willBeginToDecompressFile:strPath number:index of:_numFiles withTotalUncompressedBytes:fileInfo.uncompressed_size];
+			}
+			
             FILE* fp = NULL;
             do
             {
@@ -342,6 +348,11 @@
                         }
                     }
                     fwrite(buffer, read, 1, fp );
+					
+					// Send message to delegate about number if bytes written out
+					if ([_delegate respondsToSelector:@selector(zipArchive:uncompressedBytesWritten:)]) {
+						[_delegate zipArchive:self uncompressedBytesWritten:read];
+					}
                 }
                 else // if (read < 0)
                 {
@@ -404,7 +415,7 @@
             }
             
             if (_progressBlock && _numFiles) {
-                index++;
+                //index++;
                 int p = index*100/_numFiles;
                 progress = p;
                 _progressBlock(progress, index, _numFiles);
