@@ -14,6 +14,11 @@
 #include "minizip/zip.h"
 #include "minizip/unzip.h"
 
+#if __has_feature(objc_arc)
+#else
+#define NO_ARC YES
+#endif
+
 
 @interface NSFileManager(ZipArchive)
 - (NSDictionary *)_attributesOfItemAtPath:(NSString *)path followingSymLinks:(BOOL)followingSymLinks error:(NSError **)error;
@@ -61,11 +66,13 @@
     [self UnzipCloseFile];
     
     // release retained/copied properties.
+#ifdef NO_ARC
     [_password release];
     [_delegate release];
     [_unzippedFiles release];
     
 	[super dealloc];
+#endif
 }
 
 /**
@@ -107,87 +114,91 @@
 
 -(BOOL) addFileToZip:(NSString*) file newname:(NSString*) newname;
 {
-	if( !_zipFile )
-		return NO;
-//	tm_zip filetime;
-	
-	zip_fileinfo zipInfo = {{0}};
-
-	NSDate* fileDate = nil;
-    
-    NSError* error = nil;
-	NSDictionary* attr = [_fileManager _attributesOfItemAtPath:file followingSymLinks:YES error:&error];
-	if( attr )
-		fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
-
-	if( fileDate == nil )
-        fileDate = [NSDate date];
-
-    
-    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents* components = [gregorianCalendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay |
-                                    NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:fileDate];
-    [gregorianCalendar release];
-    
-    zipInfo.tmz_date.tm_sec = (uInt)components.second;
-    zipInfo.tmz_date.tm_min = (uInt)components.minute;
-    zipInfo.tmz_date.tm_hour = (uInt)components.hour;
-    zipInfo.tmz_date.tm_mday = (uInt)components.day;
-    zipInfo.tmz_date.tm_mon = (uInt)components.month;
-    zipInfo.tmz_date.tm_year = (uInt)components.year;
-    
-	
-	int ret ;
-	NSData* data = nil;
-	if( [_password length] == 0 )
-	{
-		ret = zipOpenNewFileInZip( _zipFile,
-								  (const char*) [newname cStringUsingEncoding:self.stringEncoding],
-								  &zipInfo,
-								  NULL,0,
-								  NULL,0,
-								  NULL,//comment
-								  Z_DEFLATED,
-								  Z_DEFAULT_COMPRESSION );
-	}
-	else
-	{
-		data = [ NSData dataWithContentsOfFile:file];
-		uLong crcValue = crc32( 0L,NULL, 0L );
-		crcValue = crc32( crcValue, (const Bytef*)[data bytes], (unsigned int)[data length] );
-		ret = zipOpenNewFileInZip3( _zipFile,
-								  (const char*) [newname cStringUsingEncoding:self.stringEncoding],
-								  &zipInfo,
-								  NULL,0,
-								  NULL,0,
-								  NULL,//comment
-								  Z_DEFLATED,
-								  Z_DEFAULT_COMPRESSION,
-								  0,
-								  15,
-								  8,
-								  Z_DEFAULT_STRATEGY,
-								  [_password cStringUsingEncoding:NSASCIIStringEncoding],
-								  crcValue );
-	}
-	if( ret!=Z_OK )
-	{
-		return NO;
-	}
-	if( data==nil )
-	{
-		data = [ NSData dataWithContentsOfFile:file];
-	}
-	unsigned int dataLen = (unsigned int)[data length];
-	ret = zipWriteInFileInZip( _zipFile, (const void*)[data bytes], dataLen);
-	if( ret!=Z_OK )
-	{
-		return NO;
-	}
-	ret = zipCloseFileInZip( _zipFile );
-	if( ret!=Z_OK )
-		return NO;
-	return YES;
+    @autoreleasepool {
+        if( !_zipFile )
+            return NO;
+        //	tm_zip filetime;
+        
+        zip_fileinfo zipInfo = {{0}};
+        
+        NSDate* fileDate = nil;
+        
+        NSError* error = nil;
+        NSDictionary* attr = [_fileManager _attributesOfItemAtPath:file followingSymLinks:YES error:&error];
+        if( attr )
+            fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
+        
+        if( fileDate == nil )
+            fileDate = [NSDate date];
+        
+        
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        NSDateComponents* components = [gregorianCalendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay |
+                                        NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:fileDate];
+#ifdef NO_ARC
+        [gregorianCalendar release];
+#endif
+        zipInfo.tmz_date.tm_sec = (uInt)components.second;
+        zipInfo.tmz_date.tm_min = (uInt)components.minute;
+        zipInfo.tmz_date.tm_hour = (uInt)components.hour;
+        zipInfo.tmz_date.tm_mday = (uInt)components.day;
+        zipInfo.tmz_date.tm_mon = (uInt)components.month;
+        zipInfo.tmz_date.tm_year = (uInt)components.year;
+        
+        
+        int ret ;
+        NSData* data = nil;
+        if( [_password length] == 0 )
+        {
+            ret = zipOpenNewFileInZip( _zipFile,
+                                      (const char*) [newname cStringUsingEncoding:self.stringEncoding],
+                                      &zipInfo,
+                                      NULL,0,
+                                      NULL,0,
+                                      NULL,//comment
+                                      Z_DEFLATED,
+                                      Z_DEFAULT_COMPRESSION );
+        }
+        else
+        {
+            data = [ NSData dataWithContentsOfFile:file];
+            uLong crcValue = crc32( 0L,NULL, 0L );
+            crcValue = crc32( crcValue, (const Bytef*)[data bytes], (unsigned int)[data length] );
+            ret = zipOpenNewFileInZip3( _zipFile,
+                                       (const char*) [newname cStringUsingEncoding:self.stringEncoding],
+                                       &zipInfo,
+                                       NULL,0,
+                                       NULL,0,
+                                       NULL,//comment
+                                       Z_DEFLATED,
+                                       Z_DEFAULT_COMPRESSION,
+                                       0,
+                                       15,
+                                       8,
+                                       Z_DEFAULT_STRATEGY,
+                                       [_password cStringUsingEncoding:NSASCIIStringEncoding],
+                                       crcValue );
+        }
+        if( ret!=Z_OK )
+        {
+            return NO;
+        }
+        if( data==nil )
+        {
+            data = [ NSData dataWithContentsOfFile:file];
+        }
+        unsigned int dataLen = (unsigned int)[data length];
+        ret = zipWriteInFileInZip( _zipFile, (const void*)[data bytes], dataLen);
+        if( ret!=Z_OK )
+        {
+            return NO;
+        }
+        ret = zipCloseFileInZip( _zipFile );
+        
+        if( ret!=Z_OK )
+            return NO;
+        return YES;
+    }
 }
 
 /**
@@ -216,7 +227,9 @@
 -(BOOL) UnzipOpenFile:(NSString*) zipFile
 {
     // create an array to receive the list of unzipped files.
+#ifdef NO_ARC
     if (_unzippedFiles) [_unzippedFiles release];
+#endif
     _unzippedFiles = [[NSMutableArray alloc] initWithCapacity:1];
     
 	_unzFile = unzOpen( (const char*)[zipFile UTF8String] );
@@ -370,9 +383,15 @@
                     components.year = fileInfo.tmu_date.tm_year;
                     
                     NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+#ifdef NO_ARC
                     NSDate* orgDate = [[gregorianCalendar dateFromComponents:components] retain];
+#else
+                    NSDate* orgDate = [gregorianCalendar dateFromComponents:components];
+#endif
+#ifdef NO_ARC
                     [components release];
                     [gregorianCalendar release];
+#endif
                     
                     NSDictionary* attr = [NSDictionary dictionaryWithObject:orgDate forKey:NSFileModificationDate]; //[_fileManager fileAttributesAtPath:fullPath traverseLink:YES];
                     if( attr )
@@ -385,7 +404,9 @@
                         }
                         
                     }
+#ifdef NO_ARC
                     [orgDate release];
+#endif
                     orgDate = nil;
                 }
                 
@@ -528,9 +549,11 @@
 	NSCalendar *gregorian = [[NSCalendar alloc]
 							 initWithCalendarIdentifier:NSGregorianCalendar];
 	NSDate *date = [gregorian dateFromComponents:comps];
-	
+
+#ifdef NO_ARC
 	[comps release];
 	[gregorian release];
+#endif
 	return date;
 }
 
