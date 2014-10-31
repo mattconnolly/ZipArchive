@@ -11,6 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = C9C36EF7160AC3C0005BED39 /* Build configuration list for PBXAggregateTarget "ZipArchive" */;
 			buildPhases = (
+				6347505A1A03E8D00036C4C3 /* CopyFiles */,
 			);
 			dependencies = (
 				C9C36EFD160AC3C9005BED39 /* PBXTargetDependency */,
@@ -22,6 +23,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		6347505B1A03E8EA0036C4C3 /* ZipArchive.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9E8EBF7124F3D170047C862 /* ZipArchive.h */; };
 		AA747D9F0F9514B9006C5449 /* ZipArchive_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* ZipArchive_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		C908A95C160AC26D000395DB /* ZipArchive_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* ZipArchive_Prefix.pch */; };
@@ -94,6 +96,19 @@
 			remoteInfo = "ZipArchive mac";
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6347505A1A03E8D00036C4C3 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/@{PRODUCT_NAME}";
+			dstSubfolderSpec = 16;
+			files = (
+				6347505B1A03E8EA0036C4C3 /* ZipArchive.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		AA747D9E0F9514B9006C5449 /* ZipArchive_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipArchive_Prefix.pch; sourceTree = SOURCE_ROOT; };
