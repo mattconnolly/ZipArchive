@@ -105,4 +105,9 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 -(BOOL) UnzipCloseFile;
 -(NSArray*) getZipFileContents;     // list the contents of the zip archive. must be called after UnzipOpenFile
 
+- (BOOL) extractFile:(NSString*)inPath toPath:(NSString*)outPath ;
+- (void) setPassword:(NSString*)p;
+- (BOOL) unzipIsEncrypted;
+- (BOOL) passwordCurrect:(NSString*)p;
+
 @end
