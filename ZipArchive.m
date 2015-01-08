@@ -55,6 +55,7 @@
 		_zipFile = NULL;
         _fileManager = fileManager;
         self.stringEncoding = NSUTF8StringEncoding;
+        self.compression = ZipArchiveCompressionDefault;
 	}
 	return self;
 }
@@ -157,7 +158,7 @@
                                       NULL,0,
                                       NULL,//comment
                                       Z_DEFLATED,
-                                      Z_DEFAULT_COMPRESSION );
+                                      self.compression );
         }
         else
         {
@@ -171,7 +172,7 @@
                                        NULL,0,
                                        NULL,//comment
                                        Z_DEFLATED,
-                                       Z_DEFAULT_COMPRESSION,
+                                       self.compression,
                                        0,
                                        15,
                                        8,
