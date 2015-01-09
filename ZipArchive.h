@@ -36,6 +36,8 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
     @discussion  methods for a delegate to receive error notifications and control overwriting of files
 */
 
+@class ZipArchive;
+
 @protocol ZipArchiveDelegate <NSObject>
 @optional
 
@@ -62,6 +64,10 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 */
 
 -(BOOL) OverWriteOperation:(NSString*) file;
+
+// Delegates for progress update as an alternative to using a block.
+- (void)zipArchive:(ZipArchive *)zipArchive willBeginToDecompressFile:(NSString *)file number:(NSUInteger)fileCount of:(NSUInteger)totalFiles withTotalUncompressedBytes:(NSUInteger)bytes;
+- (void)zipArchive:(ZipArchive *)zipArchive uncompressedBytesWritten:(NSUInteger)bytes;
 
 @end
 
