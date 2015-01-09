@@ -9,6 +9,10 @@
 //
 */
 
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif
+
 /**
  *  ZipArchiveCompression valuse refer from zlib.h's define.
  */
