@@ -384,7 +384,7 @@
                     components.minute = fileInfo.tmu_date.tm_min;
                     components.hour = fileInfo.tmu_date.tm_hour;
                     components.day = fileInfo.tmu_date.tm_mday;
-                    components.month = fileInfo.tmu_date.tm_mon;
+                    components.month = ( fileInfo.tmu_date.tm_mon + 1 );
                     components.year = fileInfo.tmu_date.tm_year;
                     
 #if (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000) || (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
