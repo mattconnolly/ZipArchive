@@ -12,6 +12,12 @@
 		2A2ED04D1A63A42A00F93F9C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A2ED04C1A63A42A00F93F9C /* Images.xcassets */; };
 		2A2ED05C1A63A42A00F93F9C /* DemoZipArchiveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A2ED05B1A63A42A00F93F9C /* DemoZipArchiveTests.m */; };
 		2A2ED0671A63A54200F93F9C /* TableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A2ED0661A63A54200F93F9C /* TableViewController.m */; };
+		2A2ED06D1A63B1F700F93F9C /* ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A2ED06C1A63B1F700F93F9C /* ZipArchive.m */; };
+		2A2ED0761A63B24B00F93F9C /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A2ED0701A63B24B00F93F9C /* ioapi.c */; };
+		2A2ED0771A63B24B00F93F9C /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A2ED0721A63B24B00F93F9C /* unzip.c */; };
+		2A2ED0781A63B24B00F93F9C /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A2ED0741A63B24B00F93F9C /* zip.c */; };
+		2A2ED07B1A63B26700F93F9C /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A2ED0791A63B26700F93F9C /* mztools.c */; };
+		2A2ED07D1A63B30800F93F9C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A2ED07C1A63B30800F93F9C /* libz.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +42,19 @@
 		2A2ED05B1A63A42A00F93F9C /* DemoZipArchiveTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoZipArchiveTests.m; sourceTree = "<group>"; };
 		2A2ED0651A63A54200F93F9C /* TableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewController.h; sourceTree = "<group>"; };
 		2A2ED0661A63A54200F93F9C /* TableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewController.m; sourceTree = "<group>"; };
+		2A2ED06A1A63B1F700F93F9C /* ARCMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARCMacros.h; path = ../../ARCMacros.h; sourceTree = "<group>"; };
+		2A2ED06B1A63B1F700F93F9C /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipArchive.h; path = ../../ZipArchive.h; sourceTree = "<group>"; };
+		2A2ED06C1A63B1F700F93F9C /* ZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZipArchive.m; path = ../../ZipArchive.m; sourceTree = "<group>"; };
+		2A2ED06F1A63B24B00F93F9C /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crypt.h; path = ../../minizip/crypt.h; sourceTree = "<group>"; };
+		2A2ED0701A63B24B00F93F9C /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ioapi.c; path = ../../minizip/ioapi.c; sourceTree = "<group>"; };
+		2A2ED0711A63B24B00F93F9C /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ioapi.h; path = ../../minizip/ioapi.h; sourceTree = "<group>"; };
+		2A2ED0721A63B24B00F93F9C /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = unzip.c; path = ../../minizip/unzip.c; sourceTree = "<group>"; };
+		2A2ED0731A63B24B00F93F9C /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unzip.h; path = ../../minizip/unzip.h; sourceTree = "<group>"; };
+		2A2ED0741A63B24B00F93F9C /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zip.c; path = ../../minizip/zip.c; sourceTree = "<group>"; };
+		2A2ED0751A63B24B00F93F9C /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zip.h; path = ../../minizip/zip.h; sourceTree = "<group>"; };
+		2A2ED0791A63B26700F93F9C /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mztools.c; path = ../../minizip/mztools.c; sourceTree = "<group>"; };
+		2A2ED07A1A63B26700F93F9C /* mztools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mztools.h; path = ../../minizip/mztools.h; sourceTree = "<group>"; };
+		2A2ED07C1A63B30800F93F9C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A2ED07D1A63B30800F93F9C /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +81,7 @@
 			children = (
 				2A2ED03E1A63A42A00F93F9C /* DemoZipArchive */,
 				2A2ED0581A63A42A00F93F9C /* DemoZipArchiveTests */,
+				2A2ED0681A63B18100F93F9C /* Libraries */,
 				2A2ED03D1A63A42A00F93F9C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -111,6 +132,42 @@
 				2A2ED05A1A63A42A00F93F9C /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2A2ED0681A63B18100F93F9C /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				2A2ED0691A63B19500F93F9C /* ZipArchive */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		2A2ED0691A63B19500F93F9C /* ZipArchive */ = {
+			isa = PBXGroup;
+			children = (
+				2A2ED07C1A63B30800F93F9C /* libz.dylib */,
+				2A2ED06E1A63B22900F93F9C /* minizip */,
+				2A2ED06A1A63B1F700F93F9C /* ARCMacros.h */,
+				2A2ED06B1A63B1F700F93F9C /* ZipArchive.h */,
+				2A2ED06C1A63B1F700F93F9C /* ZipArchive.m */,
+			);
+			name = ZipArchive;
+			sourceTree = "<group>";
+		};
+		2A2ED06E1A63B22900F93F9C /* minizip */ = {
+			isa = PBXGroup;
+			children = (
+				2A2ED06F1A63B24B00F93F9C /* crypt.h */,
+				2A2ED0701A63B24B00F93F9C /* ioapi.c */,
+				2A2ED0711A63B24B00F93F9C /* ioapi.h */,
+				2A2ED0791A63B26700F93F9C /* mztools.c */,
+				2A2ED07A1A63B26700F93F9C /* mztools.h */,
+				2A2ED0721A63B24B00F93F9C /* unzip.c */,
+				2A2ED0731A63B24B00F93F9C /* unzip.h */,
+				2A2ED0741A63B24B00F93F9C /* zip.c */,
+				2A2ED0751A63B24B00F93F9C /* zip.h */,
+			);
+			name = minizip;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,9 +268,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A2ED0771A63B24B00F93F9C /* unzip.c in Sources */,
+				2A2ED06D1A63B1F700F93F9C /* ZipArchive.m in Sources */,
+				2A2ED07B1A63B26700F93F9C /* mztools.c in Sources */,
 				2A2ED0451A63A42A00F93F9C /* AppDelegate.m in Sources */,
 				2A2ED0421A63A42A00F93F9C /* main.m in Sources */,
+				2A2ED0781A63B24B00F93F9C /* zip.c in Sources */,
 				2A2ED0671A63A54200F93F9C /* TableViewController.m in Sources */,
+				2A2ED0761A63B24B00F93F9C /* ioapi.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

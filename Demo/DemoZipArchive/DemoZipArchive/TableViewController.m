@@ -7,13 +7,160 @@
 //
 
 #import "TableViewController.h"
+#import "ARCMacros.h"
+#import "ZipArchive.h"
 
+
+//  ------------------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------------------
 @interface TableViewController ()
+{
+    NSMutableArray                * demoList;
+    
+    
+    UIViewController              * demoViewController;
+    
+    
+}
+
 
 @end
 
+//  ------------------------------------------------------------------------------------------------
+@interface TableViewController (Private)
+
+- ( CGFloat ) _GetStatusBarHeight;
+
+- ( void ) _InitAttributes;
+- ( void ) _ReleaseDemoViewController;
+
+- ( BOOL ) _CreateDemoViewController;
+
+//  ------------------------------------------------------------------------------------------------
+
+
+
+@end
+
+
+@implementation TableViewController (Private)
+
+//  ------------------------------------------------------------------------------------------------
+- ( CGFloat ) _GetStatusBarHeight
+{
+    UIApplication                 * application;
+    BOOL                            isPortrait;
+    
+    application                     = [UIApplication sharedApplication];
+    if ( ( nil == application ) || ( [application isStatusBarHidden] == YES ) )
+    {
+        return 0.0f;
+    }
+    
+    isPortrait                      = ( [self interfaceOrientation] == UIInterfaceOrientationPortrait );
+    return ( ( YES == isPortrait ) ? [application statusBarFrame].size.height : [application statusBarFrame].size.width );
+}
+
+//  ------------------------------------------------------------------------------------------------
+- ( void ) _InitAttributes
+{
+    demoList                        = [NSMutableArray arrayWithCapacity: 4];
+    
+    demoViewController              = nil;
+    
+}
+
+
+//  ------------------------------------------------------------------------------------------------
+- ( void ) _ReleaseDemoViewController
+{
+    if ( nil == demoViewController )
+    {
+        return;
+    }
+    
+    SAFE_ARC_RELEASE( demoViewController );
+    SAFE_ARC_ASSIGN_POINTER_NIL( demoViewController );
+}
+
+
+//  ------------------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------------------
+- ( BOOL ) _CreateDemoViewController
+{
+    UIViewController              * viewController;
+    
+    viewController                  = [UIViewController new];
+    if ( nil == viewController )
+    {
+        return NO;
+    }
+    demoViewController              = viewController;
+    
+    //  init Top bar & back button.
+    CGFloat                         screenWidth;
+    CGFloat                         statusBarHeight;
+    UINavigationBar               * bar;
+    
+    screenWidth                     = [[UIScreen mainScreen] bounds].size.width;
+    statusBarHeight                 = [self _GetStatusBarHeight];
+    bar                             = [[UINavigationBar alloc] initWithFrame: CGRectMake( 0, ( statusBarHeight + 1.0f ), screenWidth, 36)];
+    if ( nil == bar )
+    {
+        return YES;
+    }
+    [[viewController                view] setBackgroundColor: [UIColor darkGrayColor]];
+    [[viewController                view] addSubview: bar];
+    
+    UIBarButtonItem               * backItem;
+    UINavigationItem              * titleItem;
+    
+    backItem                        = SAFE_ARC_AUTORELEASE( [[UIBarButtonItem alloc] initWithTitle: @"Back" style: UIBarButtonItemStylePlain target: self action: @selector( _BackAction: )] );
+    
+    titleItem                       = SAFE_ARC_AUTORELEASE( [[UINavigationItem alloc] initWithTitle: @"Illustration Regulator"] );
+    if ( nil == titleItem )
+    {
+        return YES;
+    }
+    
+    NSLog( @"title %@", titleItem );
+    [bar                            pushNavigationItem: titleItem animated: YES];
+    if ( nil != backItem )
+    {
+        [titleItem                  setLeftBarButtonItem: backItem];
+    }
+    
+    return YES;
+}
+
+//  ------------------------------------------------------------------------------------------------
+- ( void ) _BackAction:(id) sender
+{
+    [demoViewController             dismissViewControllerAnimated: YES completion: ^()
+     {
+         [self                       _ReleaseDemoViewController];
+     }];
+    
+}
+
+//  ------------------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------------------
+
+//  ------------------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------------------
+
+@end
+
+//  ------------------------------------------------------------------------------------------------
+
+
+
 @implementation TableViewController
 
+//  ------------------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------------------
+#pragma mark overwrite implementation of UIViewController
+//  ------------------------------------------------------------------------------------------------
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -26,79 +173,69 @@
     //  must register cell class for reuse identifier.
     [(UITableView *)[self           view] registerClass: [UITableViewCell class] forCellReuseIdentifier: @"Cell"];
     
+    [self                           _InitAttributes];
 }
 
+//  ------------------------------------------------------------------------------------------------
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Potentially incomplete method implementation.
-    // Return the number of sections.
-    return 0;
-}
-
+//  ------------------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------------------
+#pragma mark protocol required for UITableViewDataSource.
+//  ------------------------------------------------------------------------------------------------
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 0;
+    if ( ( nil == demoList ) || ( [demoList count] == 0 ) )
+    {
+        return 0;
+    }
+    return [demoList count];
 }
 
-/*
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+//  ------------------------------------------------------------------------------------------------
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    UITableViewCell               * cell;
+    
+    cell                            = [tableView dequeueReusableCellWithIdentifier: @"Cell" forIndexPath: indexPath];
+    if ( nil == cell )
+    {
+        cell                        = [[UITableViewCell alloc] initWithStyle: UITableViewCellStyleValue1 reuseIdentifier: @"Cell"];
+    }
+    
+    
     
     // Configure the cell...
+    [[cell                          contentView] setBackgroundColor: [UIColor grayColor]];
     
     return cell;
 }
-*/
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+//  ------------------------------------------------------------------------------------------------
+#pragma mark protocol optional for UITableViewDelegate.
+//  ------------------------------------------------------------------------------------------------
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog( @"%@", indexPath );
+
+    
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
+//  ------------------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------------------
 
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
 
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
+
+
+//  ------------------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------------------
+
+
+
+
