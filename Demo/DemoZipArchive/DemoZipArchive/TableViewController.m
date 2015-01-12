@@ -20,6 +20,7 @@
     
     UIViewController              * demoViewController;
     
+    ZipArchive                    * zipArchive;
     
 }
 
@@ -37,7 +38,11 @@
 - ( BOOL ) _CreateDemoViewController;
 
 //  ------------------------------------------------------------------------------------------------
+- ( BOOL ) _UnZipFromDefaultToTmp:(BOOL)callback;
+- ( BOOL ) _UnZipFromDefaultToMemory:(BOOL)callback;
 
+
+//  ------------------------------------------------------------------------------------------------
 
 
 @end
@@ -65,6 +70,13 @@
 - ( void ) _InitAttributes
 {
     demoList                        = [NSMutableArray arrayWithCapacity: 4];
+    [demoList                       addObject: @" unzip from default zip file to tmp" ];
+    [demoList                       addObject: @" unzip file to tmp with callback" ];
+    [demoList                       addObject: @" unzip file default zip file to memory"];
+    [demoList                       addObject: @" unzip file to memory with callback "];
+    
+    
+    zipArchive                      = nil;
     
     demoViewController              = nil;
     
@@ -145,6 +157,110 @@
 
 //  ------------------------------------------------------------------------------------------------
 //  ------------------------------------------------------------------------------------------------
+- ( BOOL ) _UnZipFromDefaultToTmp:(BOOL)callback
+{
+    if ( nil == zipArchive )
+    {
+        return NO;
+    }
+    
+    NSFileManager                 * fileManager;
+    NSString                      * resourcePath;
+    NSString                      * fullPath;
+    NSString                      * destination;
+    
+    resourcePath                    = [[NSBundle mainBundle] resourcePath];
+    fileManager                     = [NSFileManager defaultManager];
+    fullPath                        = [resourcePath stringByAppendingPathComponent: [NSString stringWithFormat: @"ZipArchive.zip"]];
+    
+    if ( ( [fileManager fileExistsAtPath: resourcePath] == NO ) || ( [fileManager fileExistsAtPath: fullPath] == NO ) )
+    {
+        NSLog( @"file no exist." );
+        return NO;
+    }
+    
+    destination                     = [NSTemporaryDirectory() stringByAppendingString: @"ZipArchive"];
+    //  set process call back.
+    if ( YES == callback )
+    {
+        [zipArchive                 setProgressBlock: ^(int percentage, int filesProcessed, unsigned long numFiles)
+        {
+            NSLog( @"[%d%%] %d/%ld", percentage, filesProcessed, numFiles );
+        }];
+    }
+    
+    if ( [zipArchive UnzipOpenFile: fullPath ] == NO )
+    {
+        NSLog( @"cannot open zip file." );
+        [zipArchive                 UnzipCloseFile];
+        return NO;
+    }
+    
+    if ( [zipArchive UnzipFileTo: destination overWrite: YES] == NO )
+    {
+        NSLog( @"cannot unzip file to destination." );
+        [zipArchive                 UnzipCloseFile];
+        return NO;
+    }
+
+    [zipArchive                     UnzipCloseFile];
+    NSLog( @"unzip file finish." );
+    return YES;
+}
+
+//  ------------------------------------------------------------------------------------------------
+- ( BOOL ) _UnZipFromDefaultToMemory:(BOOL)callback
+{
+    if ( nil == zipArchive )
+    {
+        return NO;
+    }
+    
+    NSFileManager                 * fileManager;
+    NSString                      * resourcePath;
+    NSString                      * fullPath;
+    NSDictionary                  * zipFiles;
+    
+    zipFiles                        = nil;
+    resourcePath                    = [[NSBundle mainBundle] resourcePath];
+    fileManager                     = [NSFileManager defaultManager];
+    fullPath                        = [resourcePath stringByAppendingPathComponent: [NSString stringWithFormat: @"ZipArchive.zip"]];
+    
+    if ( ( [fileManager fileExistsAtPath: resourcePath] == NO ) || ( [fileManager fileExistsAtPath: fullPath] == NO ) )
+    {
+        NSLog( @"file no exist." );
+        return NO;
+    }
+    
+    //  set process call back.
+    if ( YES == callback )
+    {
+        [zipArchive                 setProgressBlock: ^(int percentage, int filesProcessed, unsigned long numFiles)
+         {
+             NSLog( @"[%d%%] %d/%ld", percentage, filesProcessed, numFiles );
+         }];
+    }
+    
+    if ( [zipArchive UnzipOpenFile: fullPath ] == NO )
+    {
+        NSLog( @"cannot open zip file." );
+        [zipArchive                 UnzipCloseFile];
+        return NO;
+    }
+    
+    zipFiles                        = [zipArchive UnzipFileToMemory];
+    if ( nil == zipFiles )
+    {
+        NSLog( @"cannot unzip file to memory");
+        [zipArchive                 UnzipCloseFile];
+        return NO;
+    }
+    
+    NSLog( @"unzip file in memory : %@", zipFiles );
+    [zipArchive                     UnzipCloseFile];
+    return YES;
+}
+
 
 //  ------------------------------------------------------------------------------------------------
 //  ------------------------------------------------------------------------------------------------
@@ -207,6 +323,14 @@
         cell                        = [[UITableViewCell alloc] initWithStyle: UITableViewCellStyleValue1 reuseIdentifier: @"Cell"];
     }
     
+    NSString                      * demoName;
+    
+    demoName                        = [demoList objectAtIndex: indexPath.row];
+    if ( nil != demoName )
+    {
+        NSLog( @"row : %ld %@", (long)indexPath.row, demoName );
+        [[cell                      textLabel] setText: demoName];
+    }
     
     
     // Configure the cell...
@@ -221,7 +345,51 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSLog( @"%@", indexPath );
-
+    ZipArchive                    * zip;
+    
+    zip                             = [[ZipArchive alloc] init];
+    if ( nil == zip )
+    {
+        return;
+    }
+    
+    zipArchive                      = zip;
+    
+    
+    
+//    NSFileManager                 * fileManager;
+//    NSString                      * resourcePath;
+//    NSString                      * fullPath;
+//    
+//    resourcePath                    = [[NSBundle mainBundle] resourcePath];
+//    fileManager                     = [NSFileManager defaultManager];
+//    fullPath                        = [resourcePath stringByAppendingPathComponent: [NSString stringWithFormat: @"ZipArchive.zip"]];
+    
+    switch ( indexPath.row )
+    {
+        case 0:
+        {
+            [self _UnZipFromDefaultToTmp: NO];
+            break;
+        }
+        case 1:
+        {
+            [self _UnZipFromDefaultToTmp: YES];
+            break;
+        }
+        case 2:
+        {
+            [self _UnZipFromDefaultToMemory: NO];
+            break;
+        }
+        case 3:
+        {
+            [self _UnZipFromDefaultToMemory: YES];
+            break;
+        }
+        default:
+            break;
+    }
     
 }
 
