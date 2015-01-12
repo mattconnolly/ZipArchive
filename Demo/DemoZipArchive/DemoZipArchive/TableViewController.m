@@ -8,7 +8,6 @@
 
 #import "TableViewController.h"
 #import "ARCMacros.h"
-#import "ZipArchive.h"
 
 
 //  ------------------------------------------------------------------------------------------------
@@ -71,9 +70,11 @@
 {
     demoList                        = [NSMutableArray arrayWithCapacity: 4];
     [demoList                       addObject: @" unzip from default zip file to tmp" ];
-    [demoList                       addObject: @" unzip file to tmp with callback" ];
+    [demoList                       addObject: @" unzip to tmp with callback" ];
+    [demoList                       addObject: @" unzip to tmp with cb & delegate"];
     [demoList                       addObject: @" unzip file default zip file to memory"];
-    [demoList                       addObject: @" unzip file to memory with callback "];
+    [demoList                       addObject: @" unzip to memory with callback "];
+    [demoList                       addObject: @" unzip to memory with cb & delegate"];
     
     
     zipArchive                      = nil;
@@ -256,7 +257,7 @@
         return NO;
     }
     
-    NSLog( @"unzip file in memory : %@", zipFiles );
+//.    NSLog( @"unzip file in memory : %@", zipFiles );
     [zipArchive                     UnzipCloseFile];
     return YES;
 }
@@ -369,22 +370,35 @@
     {
         case 0:
         {
-            [self _UnZipFromDefaultToTmp: NO];
+            [self                   _UnZipFromDefaultToTmp: NO];
             break;
         }
         case 1:
         {
-            [self _UnZipFromDefaultToTmp: YES];
+            [self                   _UnZipFromDefaultToTmp: YES];
             break;
         }
         case 2:
         {
-            [self _UnZipFromDefaultToMemory: NO];
+            [zipArchive             setDelegate: self];
+            [self                   _UnZipFromDefaultToTmp: YES];
             break;
         }
+            
         case 3:
         {
-            [self _UnZipFromDefaultToMemory: YES];
+            [self                   _UnZipFromDefaultToMemory: NO];
+            break;
+        }
+        case 4:
+        {
+            [self                   _UnZipFromDefaultToMemory: YES];
+            break;
+        }
+        case 5:
+        {
+            [zipArchive             setDelegate: self];
+            [self                   _UnZipFromDefaultToMemory: YES];
             break;
         }
         default:
@@ -395,7 +409,19 @@
 
 //  ------------------------------------------------------------------------------------------------
 //  ------------------------------------------------------------------------------------------------
+- (void)zipArchive:(ZipArchive *)zipArchive willBeginToDecompressFile:(NSString *)file number:(NSUInteger)fileCount of:(NSUInteger)totalFiles withTotalUncompressedBytes:(NSUInteger)bytes
+{
+    NSLog( @"begin to decompress file : %s %d/%d", [file UTF8String], fileCount, totalFiles );
+}
 
+//  ------------------------------------------------------------------------------------------------
+- (void)zipArchive:(ZipArchive *)zipArchive uncompressedBytesWritten:(NSUInteger)bytes
+{
+    NSLog( @"uncompressed bytes ... %8d", bytes );
+}
+
+//  ------------------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------------------
 
 
 @end

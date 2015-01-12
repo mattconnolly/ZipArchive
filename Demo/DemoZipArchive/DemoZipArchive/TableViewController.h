@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ZipArchive.h"
 
-@interface TableViewController : UITableViewController
+@interface TableViewController : UITableViewController <ZipArchiveDelegate>
 
 @end
