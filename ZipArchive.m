@@ -49,6 +49,7 @@
 @synthesize unzippedFiles = _unzippedFiles;
 @synthesize progressBlock = _progressBlock;
 @synthesize stringEncoding = _stringEncoding;
+@synthesize secondStringEncoding = _secondStringEncoding;
 
 -(id) init
 {
@@ -62,6 +63,7 @@
 		_zipFile = NULL;
         _fileManager = fileManager;
         self.stringEncoding = NSUTF8StringEncoding;
+        self.secondStringEncoding = 0;
         self.compression = ZipArchiveCompressionDefault;
 	}
 	return self;
@@ -319,6 +321,18 @@
             
             // check if it contains directory
             NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
+            if ( nil == strPath )
+            {
+                strPath         = [NSString stringWithCString: filename encoding: [self _OptionStringEncoding]];
+            }
+            if ( nil == strPath )
+            {
+                [self           OutputErrorMessage:@"Error occurs while second encoding file name"];
+                success         = NO;
+                unzCloseCurrentFile( _unzFile );
+                break;
+            }
+                        
             BOOL isDirectory = NO;
             if( filename[fileInfo.size_filename-1]=='/' || filename[fileInfo.size_filename-1]=='\\')
                 isDirectory = YES;
@@ -487,6 +501,18 @@
             
             // check if it contains directory
             NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
+            if ( nil == strPath )
+            {
+                strPath         = [NSString stringWithCString: filename encoding: [self _OptionStringEncoding]];
+            }
+            if ( nil == strPath )
+            {
+                [self           OutputErrorMessage:@"Error occurs while second encoding file name"];
+                success         = NO;
+                unzCloseCurrentFile( _unzFile );
+                break;
+            }
+            
             free( filename );
             if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
             {// contains a path
@@ -618,7 +644,18 @@
         filename[fileInfo.size_filename] = '\0';
         
         // check if it contains directory
-        NSString * strPath = [NSString stringWithCString:filename encoding:NSASCIIStringEncoding];
+        NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
+        if ( nil == strPath )
+        {
+            strPath         = [NSString stringWithCString: filename encoding: [self _OptionStringEncoding]];
+        }
+        if ( nil == strPath )
+        {
+            [self           OutputErrorMessage:@"Error occurs while second encoding file name"];
+            unzCloseCurrentFile( _unzFile );
+            break;
+        }
+        
         free( filename );
         if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
         {// contains a path
@@ -646,6 +683,12 @@
 {
 	if( _delegate && [_delegate respondsToSelector:@selector(ErrorMessage:)] )
 		[_delegate ErrorMessage:msg];
+#ifdef DEBUG
+    else
+    {
+        NSLog( @"%s", [msg UTF8String] );
+    }
+#endif
 }
 
 /**
@@ -675,6 +718,46 @@
 	return date;
 }
 
+//  ------------------------------------------------------------------------------------------------
+/**
+ *  @brief  get string encode with default string encoding or relation with preferredLanguages, again.
+ *
+ *  @return NSStringEncoding
+ */
+- (NSStringEncoding) _OptionStringEncoding
+{
+    if ( [self secondStringEncoding] != 0 )
+    {
+        return [self secondStringEncoding];
+    }
+    
+    //  when second not set, use setting language in device.
+    NSString                  * language;
+    language                    = [[NSLocale preferredLanguages] objectAtIndex: 0];
+    if ( nil == language )
+    {
+        return [self stringEncoding];
+    }
+    
+    if ( [language isEqualToString: @"ja"] == YES )
+    {
+        return CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
+    }
+    if ( [language isEqualToString: @"zh-Hant"] == YES )
+    {
+        return CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacChineseTrad);
+    }
+    if ( [language isEqualToString: @"zh-Hans"] == YES )
+    {
+        return CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacChineseSimp);
+    }
+    if ( [language isEqualToString: @"ko"] == YES )
+    {
+        return CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacKorean);
+    }
+    return [self stringEncoding];
+}
+//  ------------------------------------------------------------------------------------------------
 
 @end
 

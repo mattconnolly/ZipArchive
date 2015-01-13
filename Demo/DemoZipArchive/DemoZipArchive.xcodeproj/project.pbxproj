@@ -18,7 +18,8 @@
 		2A2ED0781A63B24B00F93F9C /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A2ED0741A63B24B00F93F9C /* zip.c */; };
 		2A2ED07B1A63B26700F93F9C /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 2A2ED0791A63B26700F93F9C /* mztools.c */; };
 		2A2ED07D1A63B30800F93F9C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A2ED07C1A63B30800F93F9C /* libz.dylib */; };
-		2A2ED0801A63E14400F93F9C /* ZipArchive.zip in Resources */ = {isa = PBXBuildFile; fileRef = 2A2ED07F1A63E14400F93F9C /* ZipArchive.zip */; };
+		2A5E1B571A6589A600C2344A /* 測試用中文目錄.zip in Resources */ = {isa = PBXBuildFile; fileRef = 2A5E1B561A6589A600C2344A /* 測試用中文目錄.zip */; };
+		2A5E1B591A658A9B00C2344A /* ZipArchive(zip test).zip in Resources */ = {isa = PBXBuildFile; fileRef = 2A5E1B581A658A9B00C2344A /* ZipArchive(zip test).zip */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +57,8 @@
 		2A2ED0791A63B26700F93F9C /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mztools.c; path = ../../minizip/mztools.c; sourceTree = "<group>"; };
 		2A2ED07A1A63B26700F93F9C /* mztools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mztools.h; path = ../../minizip/mztools.h; sourceTree = "<group>"; };
 		2A2ED07C1A63B30800F93F9C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		2A2ED07F1A63E14400F93F9C /* ZipArchive.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; name = ZipArchive.zip; path = ../../../../../Documents/ZipArchive.zip; sourceTree = "<group>"; };
+		2A5E1B561A6589A600C2344A /* 測試用中文目錄.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "測試用中文目錄.zip"; sourceTree = "<group>"; };
+		2A5E1B581A658A9B00C2344A /* ZipArchive(zip test).zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "ZipArchive(zip test).zip"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,7 +178,8 @@
 		2A2ED07E1A63E11A00F93F9C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				2A2ED07F1A63E14400F93F9C /* ZipArchive.zip */,
+				2A5E1B581A658A9B00C2344A /* ZipArchive(zip test).zip */,
+				2A5E1B561A6589A600C2344A /* 測試用中文目錄.zip */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -261,7 +264,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2A2ED0801A63E14400F93F9C /* ZipArchive.zip in Resources */,
+				2A5E1B591A658A9B00C2344A /* ZipArchive(zip test).zip in Resources */,
+				2A5E1B571A6589A600C2344A /* 測試用中文目錄.zip in Resources */,
 				2A2ED04D1A63A42A00F93F9C /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -459,6 +463,7 @@
 				2A2ED0611A63A42A00F93F9C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2A2ED0621A63A42A00F93F9C /* Build configuration list for PBXNativeTarget "DemoZipArchiveTests" */ = {
 			isa = XCConfigurationList;
@@ -467,6 +472,7 @@
 				2A2ED0641A63A42A00F93F9C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

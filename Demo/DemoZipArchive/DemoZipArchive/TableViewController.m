@@ -39,6 +39,7 @@
 //  ------------------------------------------------------------------------------------------------
 - ( BOOL ) _UnZipFromDefaultToTmp:(BOOL)callback;
 - ( BOOL ) _UnZipFromDefaultToMemory:(BOOL)callback;
+- ( BOOL ) _UnzipFromDefaultBig5File:(BOOL)toMemory withList:(BOOL)getList;
 
 
 //  ------------------------------------------------------------------------------------------------
@@ -75,6 +76,9 @@
     [demoList                       addObject: @" unzip file default zip file to memory"];
     [demoList                       addObject: @" unzip to memory with callback "];
     [demoList                       addObject: @" unzip to memory with cb & delegate"];
+    [demoList                       addObject: @" unzip big5 file to temp"];
+    [demoList                       addObject: @" unzip big5 file to temp with list"];
+    [demoList                       addObject: @" unzip big5 file to memory"];
     
     
     zipArchive                      = nil;
@@ -172,7 +176,7 @@
     
     resourcePath                    = [[NSBundle mainBundle] resourcePath];
     fileManager                     = [NSFileManager defaultManager];
-    fullPath                        = [resourcePath stringByAppendingPathComponent: [NSString stringWithFormat: @"ZipArchive.zip"]];
+    fullPath                        = [resourcePath stringByAppendingPathComponent: [NSString stringWithFormat: @"ZipArchive(zip test).zip"]];
     
     if ( ( [fileManager fileExistsAtPath: resourcePath] == NO ) || ( [fileManager fileExistsAtPath: fullPath] == NO ) )
     {
@@ -225,7 +229,7 @@
     zipFiles                        = nil;
     resourcePath                    = [[NSBundle mainBundle] resourcePath];
     fileManager                     = [NSFileManager defaultManager];
-    fullPath                        = [resourcePath stringByAppendingPathComponent: [NSString stringWithFormat: @"ZipArchive.zip"]];
+    fullPath                        = [resourcePath stringByAppendingPathComponent: [NSString stringWithFormat: @"ZipArchive(zip test).zip"]];
     
     if ( ( [fileManager fileExistsAtPath: resourcePath] == NO ) || ( [fileManager fileExistsAtPath: fullPath] == NO ) )
     {
@@ -259,6 +263,81 @@
     
 //.    NSLog( @"unzip file in memory : %@", zipFiles );
     [zipArchive                     UnzipCloseFile];
+    return YES;
+}
+
+//  ------------------------------------------------------------------------------------------------
+- ( BOOL ) _UnzipFromDefaultBig5File:(BOOL)toMemory withList:(BOOL)getList
+{
+    if ( nil == zipArchive )
+    {
+        return NO;
+    }
+    
+    NSFileManager                 * fileManager;
+    NSString                      * resourcePath;
+    NSString                      * fullPath;
+    NSString                      * destination;
+    
+    resourcePath                    = [[NSBundle mainBundle] resourcePath];
+    fileManager                     = [NSFileManager defaultManager];
+    fullPath                        = [resourcePath stringByAppendingPathComponent: [NSString stringWithFormat: @"測試用中文目錄.zip"]];
+    if ( ( [fileManager fileExistsAtPath: resourcePath] == NO ) || ( [fileManager fileExistsAtPath: fullPath] == NO ) )
+    {
+        NSLog( @"file no exist." );
+        return NO;
+    }
+    
+    [zipArchive                     setStringEncoding:  NSUTF8StringEncoding];
+    [zipArchive                     setSecondStringEncoding: CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingBig5)];
+    
+    
+    destination                     = [NSTemporaryDirectory() stringByAppendingString: @"ZipArchive"];
+    if ( [zipArchive UnzipOpenFile: fullPath ] == NO )
+    {
+        NSLog( @"cannot open zip file." );
+        [zipArchive                 UnzipCloseFile];
+        return NO;
+    }
+    
+    if ( NO == toMemory )
+    {
+        if ( [zipArchive UnzipFileTo: destination overWrite: YES] == NO )
+        {
+            NSLog( @"cannot unzip file to destination." );
+            [zipArchive             UnzipCloseFile];
+            return NO;
+        }
+    }
+    else
+    {
+        NSDictionary              * zipFiles;
+        
+        zipFiles                    = nil;
+        zipFiles                    = [zipArchive UnzipFileToMemory];
+        if ( nil == zipFiles )
+        {
+            NSLog( @"cannot unzip file to memory");
+            [zipArchive             UnzipCloseFile];
+            return NO;
+        }
+        NSLog( @"unzip file in memory : %@", zipFiles );
+        
+    }
+    
+    
+    if ( YES == getList )
+    {
+        NSArray                   * fileList;
+        fileList                    = [zipArchive getZipFileContents];
+        if ( nil != fileList )
+        {
+            NSLog( @"%@", fileList );
+        }
+    }
+    
+    [zipArchive                     UnzipCloseFile];
+    NSLog( @"unzip file finish." );
     return YES;
 }
 
@@ -353,31 +432,12 @@
     {
         return;
     }
-    
     zipArchive                      = zip;
-    
-    
-    
-//    NSFileManager                 * fileManager;
-//    NSString                      * resourcePath;
-//    NSString                      * fullPath;
-//    
-//    resourcePath                    = [[NSBundle mainBundle] resourcePath];
-//    fileManager                     = [NSFileManager defaultManager];
-//    fullPath                        = [resourcePath stringByAppendingPathComponent: [NSString stringWithFormat: @"ZipArchive.zip"]];
     
     switch ( indexPath.row )
     {
-        case 0:
-        {
-            [self                   _UnZipFromDefaultToTmp: NO];
-            break;
-        }
-        case 1:
-        {
-            [self                   _UnZipFromDefaultToTmp: YES];
-            break;
-        }
+        case 0:     [self           _UnZipFromDefaultToTmp: NO];                    break;
+        case 1:     [self           _UnZipFromDefaultToTmp: YES];                   break;
         case 2:
         {
             [zipArchive             setDelegate: self];
@@ -385,22 +445,17 @@
             break;
         }
             
-        case 3:
-        {
-            [self                   _UnZipFromDefaultToMemory: NO];
-            break;
-        }
-        case 4:
-        {
-            [self                   _UnZipFromDefaultToMemory: YES];
-            break;
-        }
+        case 3:     [self           _UnZipFromDefaultToMemory: NO];                 break;
+        case 4:     [self           _UnZipFromDefaultToMemory: YES];                break;
         case 5:
         {
             [zipArchive             setDelegate: self];
             [self                   _UnZipFromDefaultToMemory: YES];
             break;
         }
+        case 6:     [self           _UnzipFromDefaultBig5File: NO  withList: NO];   break;
+        case 7:     [self           _UnzipFromDefaultBig5File: NO  withList: YES];  break;
+        case 8:     [self           _UnzipFromDefaultBig5File: YES withList: NO];   break;
         default:
             break;
     }
