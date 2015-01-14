@@ -192,9 +192,9 @@
     //  set process call back.
     if ( YES == callback )
     {
-        [zipArchive                 setProgressBlock: ^(int percentage, int filesProcessed, unsigned long numFiles)
+        [zipArchive                 setProgressBlock: ^(int percentage, int filesProcessed, unsigned long numFiles, NSString * filename)
         {
-            NSLog( @"[%d%%] %d/%ld", percentage, filesProcessed, numFiles );
+            NSLog( @"[%d%%] %d/%ld  %s", percentage, filesProcessed, numFiles, [filename UTF8String] );
         }];
     }
     
@@ -244,9 +244,9 @@
     //  set process call back.
     if ( YES == callback )
     {
-        [zipArchive                 setProgressBlock: ^(int percentage, int filesProcessed, unsigned long numFiles)
+        [zipArchive                 setProgressBlock: ^(int percentage, int filesProcessed, unsigned long numFiles, NSString * filename)
          {
-             NSLog( @"[%d%%] %d/%ld", percentage, filesProcessed, numFiles );
+             NSLog( @"[%d%%] %d/%ld  %s", percentage, filesProcessed, numFiles, [filename UTF8String] );
          }];
     }
     
