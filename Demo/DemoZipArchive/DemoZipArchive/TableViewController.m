@@ -41,6 +41,7 @@
 - ( BOOL ) _UnZipFromDefaultToMemory:(BOOL)callback;
 - ( BOOL ) _UnzipFromDefaultBig5File:(BOOL)toMemory withList:(BOOL)getList;
 
+- ( BOOL ) _ZipFileFromTmp;
 
 //  ------------------------------------------------------------------------------------------------
 
@@ -79,6 +80,8 @@
     [demoList                       addObject: @" unzip big5 file to temp"];
     [demoList                       addObject: @" unzip big5 file to temp with list"];
     [demoList                       addObject: @" unzip big5 file to memory"];
+    [demoList                       addObject: @" ------------------------------------ "];
+    [demoList                       addObject: @" zip file from tmp to cache (not dir)"];
     
     
     zipArchive                      = nil;
@@ -341,6 +344,83 @@
     return YES;
 }
 
+//  ------------------------------------------------------------------------------------------------
+- ( BOOL ) _ZipFileFromTmp
+{
+    if ( nil == zipArchive )
+    {
+        return NO;
+    }
+    NSFileManager                 * fileManager;
+    NSString                      * tempPath;
+    
+    fileManager                     = [NSFileManager defaultManager];
+
+    //  prework, clear & unzip resource file to tmp.
+    tempPath                        = [NSTemporaryDirectory() stringByAppendingString: @"ZipArchive"];;
+    if ( ( nil != tempPath ) && ( [fileManager fileExistsAtPath: tempPath] == YES ) )
+    {
+        NSError                   * error;
+        
+        error                       = nil;
+        [fileManager                removeItemAtPath: tempPath error: &error ];
+    }
+    [self                           _UnZipFromDefaultToTmp: NO];
+    
+    NSArray                       * paths;
+    NSString                      * cachePath;
+    NSError                       * error;
+    BOOL                            isDir;
+
+    paths                           = NSSearchPathForDirectoriesInDomains( NSCachesDirectory, NSUserDomainMask, YES );
+    cachePath                       = [paths objectAtIndex:0];
+    isDir                           = NO;
+    error                           = nil;
+    if ( ( [fileManager fileExistsAtPath:cachePath isDirectory:&isDir] == NO ) && ( NO == isDir ) )
+    {
+        error                       = nil;
+        [fileManager                createDirectoryAtPath: cachePath withIntermediateDirectories: NO attributes: nil error: &error];
+    }
+    
+    NSString                      * zipFile;
+    NSString                      * fullPath;
+    
+    paths                           = nil;
+    error                           = nil;
+    fullPath                        = nil;
+    paths                           = [fileManager contentsOfDirectoryAtPath: tempPath error: &error];
+    zipFile                         = [cachePath stringByAppendingString: @"/zipfile.zip"];
+    if ( [zipArchive CreateZipFile2: zipFile] == NO )
+    {
+        NSLog( @"cannot create zip file!" );
+        return NO;
+    }
+    for ( NSString * filename in paths )
+    {
+        if ( nil == filename )
+        {
+            continue;
+        }
+        fullPath                    = [tempPath stringByAppendingFormat: @"/%s", [filename UTF8String]];
+        if ( nil == fullPath )
+        {
+            continue;
+        }
+        //  because the zip method, just do zip, cannot loop in directory & zip sub files or directory ...
+        isDir                           = NO;
+        if ( ( [fileManager fileExistsAtPath: fullPath isDirectory: &isDir] == YES ) && ( YES == isDir ) )
+        {
+            continue;
+        }
+        
+        [zipArchive                 addFileToZip: fullPath newname: filename];
+    }
+    
+    [zipArchive                     CloseZipFile2];
+    NSLog( @"zip file finish." );
+    return YES;
+}
+
 
 //  ------------------------------------------------------------------------------------------------
 //  ------------------------------------------------------------------------------------------------
@@ -456,6 +536,8 @@
         case 6:     [self           _UnzipFromDefaultBig5File: NO  withList: NO];   break;
         case 7:     [self           _UnzipFromDefaultBig5File: NO  withList: YES];  break;
         case 8:     [self           _UnzipFromDefaultBig5File: YES withList: NO];   break;
+            
+        case 10:    [self           _ZipFileFromTmp];                               break;
         default:
             break;
     }
