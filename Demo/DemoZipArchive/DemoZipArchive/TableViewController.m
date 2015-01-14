@@ -41,7 +41,7 @@
 - ( BOOL ) _UnZipFromDefaultToMemory:(BOOL)callback;
 - ( BOOL ) _UnzipFromDefaultBig5File:(BOOL)toMemory withList:(BOOL)getList;
 
-- ( BOOL ) _ZipFileFromTmp;
+- ( BOOL ) _ZipFileFromTmp:(BOOL)withDirectory;
 
 //  ------------------------------------------------------------------------------------------------
 
@@ -82,6 +82,7 @@
     [demoList                       addObject: @" unzip big5 file to memory"];
     [demoList                       addObject: @" ------------------------------------ "];
     [demoList                       addObject: @" zip file from tmp to cache (not dir)"];
+    [demoList                       addObject: @" zip file from tmp to cache (with dir)"];
     
     
     zipArchive                      = nil;
@@ -345,7 +346,7 @@
 }
 
 //  ------------------------------------------------------------------------------------------------
-- ( BOOL ) _ZipFileFromTmp
+- ( BOOL ) _ZipFileFromTmp:(BOOL)withDirectory
 {
     if ( nil == zipArchive )
     {
@@ -395,6 +396,18 @@
         NSLog( @"cannot create zip file!" );
         return NO;
     }
+    
+    if ( YES == withDirectory )
+    {
+        NSInteger                   count;
+        
+        [zipArchive                 setCompression: ZipArchiveCompressionNone];
+        count                       = [zipArchive addFolderToZip: tempPath pathPrefix: @"JustTest" ];
+        [zipArchive                 CloseZipFile2];
+        NSLog( @"zip file finish.(%d)", count );
+        return YES;
+    }
+    
     for ( NSString * filename in paths )
     {
         if ( nil == filename )
@@ -537,7 +550,8 @@
         case 7:     [self           _UnzipFromDefaultBig5File: NO  withList: YES];  break;
         case 8:     [self           _UnzipFromDefaultBig5File: YES withList: NO];   break;
             
-        case 10:    [self           _ZipFileFromTmp];                               break;
+        case 10:    [self           _ZipFileFromTmp: NO];                           break;
+        case 11:    [self           _ZipFileFromTmp: YES];                          break;
         default:
             break;
     }
