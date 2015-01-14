@@ -245,6 +245,74 @@
 	return fileCount;
 }
 
+//  ------------------------------------------------------------------------------------------------
+-(NSInteger) addFolderToZip:(NSString*)path pathPrefix:(NSString*)prefix progress:(ZippingProgressBlock)progressBlock
+{
+    return [self _addFolderToZip: path pathPrefix: prefix progress: progressBlock deep: 0];
+}
+
+//  ------------------------------------------------------------------------------------------------
+-(NSInteger) _addFolderToZip:(NSString*)path pathPrefix:(NSString*)prefix progress:(ZippingProgressBlock)progressBlock deep:(NSInteger)deepIndex;
+{
+    BOOL                        isDirSymbolicLink;
+    NSString                  * filename;
+    NSInteger                   deepCount;
+    NSInteger                   fileCount;
+    NSArray                   * dirArray;
+    NSString                  * dirItem;
+    NSDictionary              * dict;
+    
+    fileCount                   = 0;
+    dirArray                    = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
+    if( prefix == nil )
+    {
+        prefix                  = [path lastPathComponent];
+    }
+    else
+    {
+        prefix                  = [prefix stringByAppendingPathComponent:[path lastPathComponent]];
+    }
+    [self                       addFileToZip:path newname:[prefix stringByAppendingString:@"/"]];
+    
+    
+    for ( int i = 0; i < [dirArray count]; i++ )
+    {
+        dirItem                 = nil;
+        dict                    = nil;
+        filename                = nil;
+        isDirSymbolicLink       = NO;
+        dirItem                 = [dirArray objectAtIndex: i];
+        dict                    = [[NSFileManager defaultManager] attributesOfItemAtPath:[path stringByAppendingPathComponent:dirItem] error:nil];
+        filename                = ([prefix length]>0 ? [prefix stringByAppendingPathComponent:dirItem] : dirItem);
+        if ([[dict fileType] isEqualToString:NSFileTypeDirectory] || [[dict fileType] isEqualToString:NSFileTypeSymbolicLink])
+        {
+            isDirSymbolicLink   = YES;
+        }
+        if ( nil != progressBlock )
+        {
+            progressBlock( deepIndex, i, [dirArray count], filename, isDirSymbolicLink );
+        }
+        if ( YES == isDirSymbolicLink )
+        {
+            //Recursively do subfolders.
+            deepCount           = deepIndex + 1;
+            fileCount += [self _addFolderToZip:[path stringByAppendingPathComponent:dirItem] pathPrefix:prefix progress: progressBlock deep: deepCount];
+        }
+        else
+        {
+            //Count if added OK.
+            if ([self addFileToZip:[path stringByAppendingPathComponent:dirItem] newname: filename])
+            {
+                fileCount++;
+            }
+        }
+    }
+    return fileCount;
+}
+
+//  ------------------------------------------------------------------------------------------------
+
+
 /**
  * Close a zip file after creating and added files to it.
  *

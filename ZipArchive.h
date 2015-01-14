@@ -30,7 +30,21 @@ typedef NS_ENUM(NSInteger, ZipArchiveCompression){
  total number of files in the archive is called after each file is processed.
  */
 typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed, unsigned long numFiles);
-	
+
+//  ------------------------------------------------------------------------------------------------
+/**
+ *  use a block that is called for addFolderToZip: pathPrefix: progress: .
+ *  when zipping process, use the block parameter to assign callback parameters.
+ *
+ *  @param deepIndex            directory's deep index.
+ *  @param pathIndex            directory's item's index.
+ *  @param pathTotal            total item in directory.
+ *  @param filename             processing filename
+ *  @param isDirSymbolicLink    the processing filename is directory(symbolic link) or filename.
+ */
+typedef void(^ZippingProgressBlock)(int deepIndex, int pathIndex, int pathTotal, NSString * filename, BOOL isDirSymbolicLink);
+
+//  ------------------------------------------------------------------------------------------------
 /**
     @protocol
     @discussion  methods for a delegate to receive error notifications and control overwriting of files
@@ -125,6 +139,8 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 -(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password;
 -(BOOL) addFileToZip:(NSString*) file newname:(NSString*) newname;
 -(NSInteger) addFolderToZip:(NSString*)path pathPrefix:(NSString*)prefix;
+-(NSInteger) addFolderToZip:(NSString*)path pathPrefix:(NSString*)prefix progress:(ZippingProgressBlock)progressBlock;
+
 -(BOOL) CloseZipFile2;
 
 -(BOOL) UnzipOpenFile:(NSString*) zipFile;

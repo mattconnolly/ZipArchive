@@ -366,7 +366,8 @@
         error                       = nil;
         [fileManager                removeItemAtPath: tempPath error: &error ];
     }
-    [self                           _UnZipFromDefaultToTmp: NO];
+//    [self                           _UnZipFromDefaultToTmp: NO];
+    [self                           _UnzipFromDefaultBig5File: NO withList: NO];
     
     NSArray                       * paths;
     NSString                      * cachePath;
@@ -402,7 +403,14 @@
         NSInteger                   count;
         
         [zipArchive                 setCompression: ZipArchiveCompressionNone];
-        count                       = [zipArchive addFolderToZip: tempPath pathPrefix: @"JustTest" ];
+//        count                       = [zipArchive addFolderToZip: tempPath pathPrefix: @"JustTest" ];
+        count = [zipArchive addFolderToZip: tempPath pathPrefix: @"JustTest" progress: ^(int deepIndex, int pathIndex, int pathTotal, NSString * filename, BOOL isDirSymbolicLink )
+        {
+            NSLog( @"%d/%d/%d zipping (%d)%s ", deepIndex, pathTotal, pathIndex, isDirSymbolicLink, [filename UTF8String] );
+            
+        }];
+        
+        
         [zipArchive                 CloseZipFile2];
         NSLog( @"zip file finish.(%d)", count );
         return YES;
@@ -501,10 +509,8 @@
     demoName                        = [demoList objectAtIndex: indexPath.row];
     if ( nil != demoName )
     {
-        NSLog( @"row : %ld %@", (long)indexPath.row, demoName );
         [[cell                      textLabel] setText: demoName];
-    }
-    
+    }    
     
     // Configure the cell...
     [[cell                          contentView] setBackgroundColor: [UIColor grayColor]];
