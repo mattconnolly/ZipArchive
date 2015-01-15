@@ -77,7 +77,12 @@
 
 -(BOOL) CreateZipFile2:(NSString*) zipFile
 {
-	_zipFile = zipOpen( (const char*)[zipFile UTF8String], 0 );
+    return [self CreateZipFile2:zipFile append:NO];
+}
+
+-(BOOL) CreateZipFile2:(NSString*) zipFile append:(BOOL)isAppend
+{
+    _zipFile = zipOpen( (const char*)[zipFile UTF8String], (isAppend ? APPEND_STATUS_ADDINZIP : APPEND_STATUS_CREATE) );
 	if( !_zipFile ) 
 		return NO;
 	return YES;
@@ -95,6 +100,12 @@
 {
 	self.password = password;
 	return [self CreateZipFile2:zipFile];
+}
+
+-(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password append:(BOOL)isAppend
+{
+    self.password = password;
+    return [self CreateZipFile2:zipFile append:isAppend];
 }
 
 /**
