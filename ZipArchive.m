@@ -107,6 +107,28 @@
 
 -(BOOL) addFileToZip:(NSString*) file newname:(NSString*) newname;
 {
+    NSData *data = [NSData dataWithContentsOfFile:file];
+    NSError* error = nil;
+    NSDictionary* attr = [_fileManager _attributesOfItemAtPath:file followingSymLinks:YES error:&error];
+    BOOL result = [self addDataToZip:data fileAttributes:attr newname:newname];
+    return result;
+}
+
+/**
+ * add an existing file on disk to the zip archive, compressing it.
+ *
+ * @param data    the data to compress
+ * @param attr    the file attribute for data to add as file
+ * @param newname the name of the file in the zip archive, ie: path relative to the zip archive root.
+ * @returns BOOL YES on success
+ */
+
+-(BOOL) addDataToZip:(NSData*) data fileAttributes:(NSDictionary *)attr newname:(NSString*) newname
+{
+    if (!data)
+    {
+        return NO;
+    }
 	if( !_zipFile )
 		return NO;
 //	tm_zip filetime;
@@ -115,8 +137,6 @@
 
 	NSDate* fileDate = nil;
     
-    NSError* error = nil;
-	NSDictionary* attr = [_fileManager _attributesOfItemAtPath:file followingSymLinks:YES error:&error];
 	if( attr )
 		fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
 
@@ -138,7 +158,6 @@
     
 	
 	int ret ;
-	NSData* data = nil;
 	if( [_password length] == 0 )
 	{
 		ret = zipOpenNewFileInZip( _zipFile,
@@ -152,7 +171,6 @@
 	}
 	else
 	{
-		data = [ NSData dataWithContentsOfFile:file];
 		uLong crcValue = crc32( 0L,NULL, 0L );
 		crcValue = crc32( crcValue, (const Bytef*)[data bytes], (unsigned int)[data length] );
 		ret = zipOpenNewFileInZip3( _zipFile,
@@ -173,10 +191,6 @@
 	if( ret!=Z_OK )
 	{
 		return NO;
-	}
-	if( data==nil )
-	{
-		data = [ NSData dataWithContentsOfFile:file];
 	}
 	unsigned int dataLen = (unsigned int)[data length];
 	ret = zipWriteInFileInZip( _zipFile, (const void*)[data bytes], dataLen);
