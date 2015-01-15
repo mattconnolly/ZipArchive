@@ -105,7 +105,7 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 -(BOOL) UnzipOpenFile:(NSString*) zipFile;
 -(BOOL) UnzipOpenFile:(NSString*) zipFile Password:(NSString*) password;
 -(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite;
--(NSDictionary *)UnzipFileToMemory;
+-(NSDictionary *)UnzipFileToMemory;//To avoid memory issue, only use this method for small zip files.
 -(BOOL) UnzipCloseFile;
 
 // List the contents of the zip archive. must be called after UnzipOpenFile.
