@@ -95,14 +95,22 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 -(id) initWithFileManager:(NSFileManager*) fileManager;
 
 -(BOOL) CreateZipFile2:(NSString*) zipFile;
+-(BOOL) CreateZipFile2:(NSString*) zipFile append:(BOOL)isAppend;
 -(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password;
+-(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password append:(BOOL)isAppend;
 -(BOOL) addFileToZip:(NSString*) file newname:(NSString*) newname;
+-(BOOL) addDataToZip:(NSData*) data fileAttributes:(NSDictionary *)attr newname:(NSString*) newname;
 -(BOOL) CloseZipFile2;
 
 -(BOOL) UnzipOpenFile:(NSString*) zipFile;
 -(BOOL) UnzipOpenFile:(NSString*) zipFile Password:(NSString*) password;
 -(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite;
+-(NSDictionary *)UnzipFileToMemory;//To avoid memory issue, only use this method for small zip files.
 -(BOOL) UnzipCloseFile;
--(NSArray*) getZipFileContents;     // list the contents of the zip archive. must be called after UnzipOpenFile
+
+// List the contents of the zip archive. must be called after UnzipOpenFile.
+// If zip file was appended with `CreateZipFile2:append:` or ``CreateZipFile2:Password:append:`,
+// `getZipFileContents` result won't be updated until re-unzip-open after close write handle (`CloseZipFile2` then `UnzipCloseFile` then (`UnzipOpenFile:` or `UnzipOpenFile:Password`) get called).
+-(NSArray*) getZipFileContents;
 
 @end

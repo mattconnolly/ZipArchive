@@ -77,7 +77,12 @@
 
 -(BOOL) CreateZipFile2:(NSString*) zipFile
 {
-	_zipFile = zipOpen( (const char*)[zipFile UTF8String], 0 );
+    return [self CreateZipFile2:zipFile append:NO];
+}
+
+-(BOOL) CreateZipFile2:(NSString*) zipFile append:(BOOL)isAppend
+{
+    _zipFile = zipOpen( (const char*)[zipFile UTF8String], (isAppend ? APPEND_STATUS_ADDINZIP : APPEND_STATUS_CREATE) );
 	if( !_zipFile ) 
 		return NO;
 	return YES;
@@ -97,6 +102,12 @@
 	return [self CreateZipFile2:zipFile];
 }
 
+-(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password append:(BOOL)isAppend
+{
+    self.password = password;
+    return [self CreateZipFile2:zipFile append:isAppend];
+}
+
 /**
  * add an existing file on disk to the zip archive, compressing it.
  *
@@ -107,6 +118,28 @@
 
 -(BOOL) addFileToZip:(NSString*) file newname:(NSString*) newname;
 {
+    NSData *data = [NSData dataWithContentsOfFile:file];
+    NSError* error = nil;
+    NSDictionary* attr = [_fileManager _attributesOfItemAtPath:file followingSymLinks:YES error:&error];
+    BOOL result = [self addDataToZip:data fileAttributes:attr newname:newname];
+    return result;
+}
+
+/**
+ * add an existing file on disk to the zip archive, compressing it.
+ *
+ * @param data    the data to compress
+ * @param attr    the file attribute for data to add as file
+ * @param newname the name of the file in the zip archive, ie: path relative to the zip archive root.
+ * @returns BOOL YES on success
+ */
+
+-(BOOL) addDataToZip:(NSData*) data fileAttributes:(NSDictionary *)attr newname:(NSString*) newname
+{
+    if (!data)
+    {
+        return NO;
+    }
 	if( !_zipFile )
 		return NO;
 //	tm_zip filetime;
@@ -115,8 +148,6 @@
 
 	NSDate* fileDate = nil;
     
-    NSError* error = nil;
-	NSDictionary* attr = [_fileManager _attributesOfItemAtPath:file followingSymLinks:YES error:&error];
 	if( attr )
 		fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
 
@@ -138,7 +169,6 @@
     
 	
 	int ret ;
-	NSData* data = nil;
 	if( [_password length] == 0 )
 	{
 		ret = zipOpenNewFileInZip( _zipFile,
@@ -152,7 +182,6 @@
 	}
 	else
 	{
-		data = [ NSData dataWithContentsOfFile:file];
 		uLong crcValue = crc32( 0L,NULL, 0L );
 		crcValue = crc32( crcValue, (const Bytef*)[data bytes], (unsigned int)[data length] );
 		ret = zipOpenNewFileInZip3( _zipFile,
@@ -173,10 +202,6 @@
 	if( ret!=Z_OK )
 	{
 		return NO;
-	}
-	if( data==nil )
-	{
-		data = [ NSData dataWithContentsOfFile:file];
 	}
 	unsigned int dataLen = (unsigned int)[data length];
 	ret = zipWriteInFileInZip( _zipFile, (const void*)[data bytes], dataLen);
@@ -412,6 +437,108 @@
         }
 	} while (ret==UNZ_OK && ret!=UNZ_END_OF_LIST_OF_FILE);
 	return success;
+}
+
+-(NSDictionary *)UnzipFileToMemory
+{
+    NSMutableDictionary *fileDictionary = [NSMutableDictionary dictionary];
+    
+    BOOL success = YES;
+    int index = 0;
+    int progress = -1;
+    int ret = unzGoToFirstFile( _unzFile );
+    unsigned char		buffer[4096] = {0};
+    if( ret!=UNZ_OK )
+    {
+        [self OutputErrorMessage:@"Failed"];
+    }
+    
+    const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
+    
+    do{
+        @autoreleasepool {
+            if( [_password length]==0 )
+                ret = unzOpenCurrentFile( _unzFile );
+            else
+                ret = unzOpenCurrentFilePassword( _unzFile, password );
+            if( ret!=UNZ_OK )
+            {
+                [self OutputErrorMessage:@"Error occurs"];
+                success = NO;
+                break;
+            }
+            // reading data and write to file
+            int read ;
+            unz_file_info	fileInfo ={0};
+            ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+            if( ret!=UNZ_OK )
+            {
+                [self OutputErrorMessage:@"Error occurs while getting file info"];
+                success = NO;
+                unzCloseCurrentFile( _unzFile );
+                break;
+            }
+            char* filename = (char*) malloc( fileInfo.size_filename +1 );
+            unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
+            filename[fileInfo.size_filename] = '\0';
+            
+            // check if it contains directory
+            NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
+            free( filename );
+            if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
+            {// contains a path
+                strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+            }
+            
+            NSMutableData *fileMutableData = [NSMutableData data];
+            do
+            {
+                read = unzReadCurrentFile(_unzFile, buffer, 4096);
+                if (read >= 0)
+                {
+                    if (read != 0)
+                    {
+                        [fileMutableData appendBytes:buffer length:read];
+                    }
+                }
+                else // if (read < 0)
+                {
+                    ret = read; // result will be an error code
+                    success = NO;
+                    [self OutputErrorMessage:@"Failed to read zip file"];
+                }
+            } while (read > 0);
+            
+            
+            if (fileMutableData.length > 0)
+            {
+                NSData *fileData = [NSData dataWithData:fileMutableData];
+                [fileDictionary setObject:fileData forKey:strPath];
+            }
+            
+            if (ret == UNZ_OK) {
+                ret = unzCloseCurrentFile( _unzFile );
+                if (ret != UNZ_OK) {
+                    [self OutputErrorMessage:@"file was unzipped but failed crc check"];
+                    success = NO;
+                }
+            }
+            
+            if (ret == UNZ_OK) {
+                ret = unzGoToNextFile( _unzFile );
+            }
+            
+            if (_progressBlock && _numFiles) {
+                index++;
+                int p = index*100/_numFiles;
+                progress = p;
+                _progressBlock(progress, index, _numFiles);
+            }
+        }
+    } while (ret==UNZ_OK && ret!=UNZ_END_OF_LIST_OF_FILE);
+    
+    NSDictionary *resultDictionary = [NSDictionary dictionaryWithDictionary:fileDictionary];
+    return resultDictionary;
 }
 
 /**
