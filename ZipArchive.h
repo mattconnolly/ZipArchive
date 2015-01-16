@@ -10,6 +10,12 @@
 */
 
 
+typedef NS_ENUM(NSInteger, ZipArchiveCompression) {
+    ZipArchiveCompressionDefault = -1,
+    ZipArchiveCompressionNone    =  0,
+    ZipArchiveCompressionSpeed   =  1,
+    ZipArchiveCompressionBest    =  9,
+};
 
 
 /**
@@ -83,6 +89,8 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 @property (nonatomic, retain) id<ZipArchiveDelegate> delegate;
 @property (nonatomic, readonly) unsigned long numFiles;
 @property (nonatomic, copy) ZipArchiveProgressUpdateBlock progressBlock;
+
+@property (nonatomic, assign) ZipArchiveCompression compression;
 
 /**
     @brief      String encoding to be used when interpreting file names in the zip file.
