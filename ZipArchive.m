@@ -16,16 +16,6 @@
 
 
 
-//  ------------------------------------------------------------------------------------------------
-//  ------------------------------------------------------------------------------------------------
-#if (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 40000) || (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060)
-    #define TDCalendarIdentifierGregorian   NSCalendarIdentifierGregorian
-#else
-    #define TDCalendarIdentifierGregorian   NSGregorianCalendar
-#endif
-
-//  ------------------------------------------------------------------------------------------------
-
 @interface NSFileManager(ZipArchive)
 - (NSDictionary *)_attributesOfItemAtPath:(NSString *)path followingSymLinks:(BOOL)followingSymLinks error:(NSError **)error;
 @end
@@ -140,7 +130,7 @@
             fileDate = [NSDate date];
         
         //NS_AVAILABLE(10_6, 4_0);
-        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier: TDCalendarIdentifierGregorian];
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSCalendarIdentifierGregorian];
         NSDateComponents* components = [gregorianCalendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay |
                                         NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:fileDate];
         [gregorianCalendar release];
@@ -448,7 +438,7 @@
                     components.month = ( fileInfo.tmu_date.tm_mon + 1 );
                     components.year = fileInfo.tmu_date.tm_year;
                     
-                    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:TDCalendarIdentifierGregorian];
+                    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
                     
                     NSDate* orgDate =  [[gregorianCalendar dateFromComponents:components] retain];
                     [components release];
@@ -748,7 +738,7 @@
 	[comps setDay:1];
 	[comps setMonth:1];
 	[comps setYear:1980];
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:TDCalendarIdentifierGregorian];
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
 	NSDate *date = [gregorian dateFromComponents:comps];
 
     [comps release];
