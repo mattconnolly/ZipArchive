@@ -22,8 +22,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		2A79102E1A603EDE002D971E /* ARCMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A79102D1A603EDE002D971E /* ARCMacros.h */; };
-		2A79102F1A603EDE002D971E /* ARCMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A79102D1A603EDE002D971E /* ARCMacros.h */; };
 		AA747D9F0F9514B9006C5449 /* ZipArchive_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* ZipArchive_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		C908A95C160AC26D000395DB /* ZipArchive_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* ZipArchive_Prefix.pch */; };
@@ -97,7 +95,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2A79102D1A603EDE002D971E /* ARCMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARCMacros.h; path = ../ARCMacros.h; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* ZipArchive_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipArchive_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		C908A96F160AC26D000395DB /* libZipArchive-mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libZipArchive-mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -227,7 +224,6 @@
 		08FB77AEFE84172EC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				2A79102D1A603EDE002D971E /* ARCMacros.h */,
 				C9E8EBF7124F3D170047C862 /* ZipArchive.h */,
 				C9E8EBF8124F3D170047C862 /* ZipArchive.m */,
 				C9E8EBE1124F3D030047C862 /* minizip */,
@@ -348,7 +344,6 @@
 				C908A962160AC26D000395DB /* ZipArchive.h in Headers */,
 				C908A95D160AC26D000395DB /* crypt.h in Headers */,
 				C908A95E160AC26D000395DB /* ioapi.h in Headers */,
-				2A79102F1A603EDE002D971E /* ARCMacros.h in Headers */,
 				C908A95F160AC26D000395DB /* mztools.h in Headers */,
 				C908A960160AC26D000395DB /* unzip.h in Headers */,
 				C908A961160AC26D000395DB /* zip.h in Headers */,
@@ -363,7 +358,6 @@
 				C9E8EBF9124F3D170047C862 /* ZipArchive.h in Headers */,
 				C9E8EBED124F3D030047C862 /* crypt.h in Headers */,
 				C9E8EBEF124F3D030047C862 /* ioapi.h in Headers */,
-				2A79102E1A603EDE002D971E /* ARCMacros.h in Headers */,
 				C9E8EBF2124F3D030047C862 /* mztools.h in Headers */,
 				C9E8EBF4124F3D030047C862 /* unzip.h in Headers */,
 				C9E8EBF6124F3D030047C862 /* zip.h in Headers */,
@@ -635,7 +629,7 @@
 		1DEB922308733DC00010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -651,7 +645,7 @@
 		1DEB922408733DC00010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
