@@ -29,7 +29,7 @@ typedef NS_ENUM(NSInteger, ZipArchiveCompression){
  files processed (as an integer from 0 to 100), the number of files processed so far and the
  total number of files in the archive is called after each file is processed.
  */
-typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed, unsigned long numFiles, NSString * filename );
+typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed, unsigned long numFiles);
 
 /**
     @protocol
