@@ -1035,10 +1035,12 @@ int Write_LocalFileHeader(zip64_internal* zi, const char* filename, uInt size_ex
       zi->ci.pos_zip64extrainfo = ZTELL64(zi->z_filefunc,zi->filestream);
 
       err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (short)HeaderID,2);
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (short)DataSize,2);
-
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)UncompressedSize,8);
-      err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)CompressedSize,8);
+      if (err == ZIP_OK)
+        err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (short)DataSize,2);
+      if (err == ZIP_OK)
+        err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)UncompressedSize,8);
+      if (err == ZIP_OK)
+        err = zip64local_putValue(&zi->z_filefunc, zi->filestream, (ZPOS64_T)CompressedSize,8);
   }
 
   return err;
@@ -1534,7 +1536,9 @@ extern int ZEXPORT zipCloseFileInZipRaw64 (zipFile file, ZPOS64_T uncompressed_s
                                 if (zi->ci.stream.avail_out == 0)
                                 {
                                         if (zip64FlushWriteBuffer(zi) == ZIP_ERRNO)
-                                                err = ZIP_ERRNO;
+                                        {
+                                                return ZIP_ERRNO;
+                                        }
                                         zi->ci.stream.avail_out = (uInt)Z_BUFSIZE;
                                         zi->ci.stream.next_out = zi->ci.buffered_data;
                                 }
@@ -1681,6 +1685,9 @@ extern int ZEXPORT zipCloseFileInZipRaw64 (zipFile file, ZPOS64_T uncompressed_s
         zip64local_putValue_inmemory(p, zi->ci.pos_local_header, 8);
         p += 8;
       }
+
+      // silence Xcode analyse warning: Value stored to 'p' is never read
+      (void)p;
 
       // Update how much extra free space we got in the memory buffer
       // and increase the centralheader size so the new ZIP64 fields are included
