@@ -604,7 +604,7 @@
         filename[fileInfo.size_filename] = '\0';
         
         // check if it contains directory
-        NSString * strPath = [NSString stringWithCString:filename encoding:NSASCIIStringEncoding];
+        NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
         free( filename );
         if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
         {// contains a path
