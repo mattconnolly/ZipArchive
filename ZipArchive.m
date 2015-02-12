@@ -14,6 +14,11 @@
 #include "minizip/zip.h"
 #include "minizip/unzip.h"
 
+#ifdef __IPHONE_8_0
+    #define GregorianCalendar NSCalendarIdentifierGregorian
+#else
+    #define GregorianCalendar NSGregorianCalendar
+#endif
 
 @interface NSFileManager(ZipArchive)
 - (NSDictionary *)_attributesOfItemAtPath:(NSString *)path followingSymLinks:(BOOL)followingSymLinks error:(NSError **)error;
@@ -156,7 +161,7 @@
         fileDate = [NSDate date];
 
     
-    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:GregorianCalendar];
     NSDateComponents* components = [gregorianCalendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay |
                                     NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:fileDate];
     [gregorianCalendar release];
@@ -395,7 +400,7 @@
                     components.month = fileInfo.tmu_date.tm_mon + 1;
                     components.year = fileInfo.tmu_date.tm_year;
                     
-                    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+                    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:GregorianCalendar];
                     NSDate* orgDate = [[gregorianCalendar dateFromComponents:components] retain];
                     [components release];
                     [gregorianCalendar release];
@@ -654,7 +659,7 @@
 	[comps setMonth:1];
 	[comps setYear:1980];
 	NSCalendar *gregorian = [[NSCalendar alloc]
-							 initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+							 initWithCalendarIdentifier:GregorianCalendar];
 	NSDate *date = [gregorian dateFromComponents:comps];
 	
 	[comps release];
