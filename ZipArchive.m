@@ -272,6 +272,20 @@
 	return [self UnzipOpenFile:zipFile];
 }
 
+
+// Helper function to replace all \ with /
+-(NSString *)strPathWithCString:(char *)filename
+{
+	NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
+
+	if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
+	{
+		strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+	}
+
+	return strPath;
+}
+
 /**
  * Expand all files in the zip archive into the specified directory.
  *
@@ -327,16 +341,11 @@
             unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
             filename[fileInfo.size_filename] = '\0';
             
-            // check if it contains directory
-            NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
-            BOOL isDirectory = NO;
-            if( filename[fileInfo.size_filename-1]=='/' || filename[fileInfo.size_filename-1]=='\\')
-                isDirectory = YES;
+			NSString * strPath = [self strPathWithCString:filename];
             free( filename );
-            if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
-            {// contains a path
-                strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-            }
+
+            BOOL isDirectory = isDirectory = [strPath hasSuffix:@"/"];
+
             NSString* fullPath = [path stringByAppendingPathComponent:strPath];
             
             if( isDirectory )
@@ -483,14 +492,8 @@
             unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
             filename[fileInfo.size_filename] = '\0';
             
-            // check if it contains directory
-            NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
-            free( filename );
-            if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
-            {// contains a path
-                strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-            }
-            
+			NSString * strPath = [self strPathWithCString:filename];
+
             NSMutableData *fileMutableData = [NSMutableData data];
             do
             {
@@ -604,13 +607,9 @@
         filename[fileInfo.size_filename] = '\0';
         
         // check if it contains directory
-        NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
+		NSString * strPath = [self strPathWithCString:filename];
         free( filename );
-        if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
-        {// contains a path
-            strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-        }
-        
+
         // Copy name to array
         [allFilenames addObject:strPath];
         
