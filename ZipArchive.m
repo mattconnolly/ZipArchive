@@ -14,11 +14,9 @@
 #include "minizip/zip.h"
 #include "minizip/unzip.h"
 
-
 @interface NSFileManager(ZipArchive)
 - (NSDictionary *)_attributesOfItemAtPath:(NSString *)path followingSymLinks:(BOOL)followingSymLinks error:(NSError **)error;
 @end
-
 
 
 @interface ZipArchive ()
@@ -290,7 +288,7 @@
 
 -(ZipFileInfo *)currentFileInfo
 {
-	// reading data and write to file
+	// get compressed file info
 	unz_file_info	fileInfo ={0};
 	int ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
 	if( ret!=UNZ_OK )
@@ -305,6 +303,9 @@
 
 	zipFileInfo.strPath = [self strPathWithCString:filename];
 	free(filename);
+
+    zipFileInfo.compressedSize = fileInfo.compressed_size;
+    zipFileInfo.uncompressedSize = fileInfo.uncompressed_size;
 
 	// set the orignal datetime property
 	if( fileInfo.tmu_date.tm_year!=0 )
@@ -627,6 +628,81 @@
     // return an immutable array.
     return [NSArray arrayWithArray:allFilenames];
 }
+    
+-(BOOL)iterateZipFileContentsWithCheckOpenBlock:(BOOL(^)(ZipFileInfo *))checkOpenBlock dataAcceptBlock:(BOOL(^)(ZipFileInfo *, NSData *))dataAcceptBlock
+{
+    int ret = unzGoToFirstFile( _unzFile );
+    
+    if( ret!=UNZ_OK )
+    {
+        [self OutputErrorMessage:@"Failed"];
+    }
+    
+    const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
+    
+    do{
+		@autoreleasepool {
+			if( [_password length]==0 )
+				ret = unzOpenCurrentFile( _unzFile );
+			else
+				ret = unzOpenCurrentFilePassword( _unzFile, password );
+			if( ret!=UNZ_OK )
+			{
+				[self OutputErrorMessage:@"Error occured"];
+				break;
+			}
+
+            // reading data and copy to memory, file by file.
+			ZipFileInfo *fileInfo = [self currentFileInfo];
+			if (fileInfo == nil){
+                [self OutputErrorMessage:@"Error occurs while getting file info"];
+                unzCloseCurrentFile( _unzFile );
+                break;
+			}
+			
+			BOOL openFile = FALSE;
+			if (checkOpenBlock != nil){
+				openFile = checkOpenBlock(fileInfo);
+			}
+
+			if (openFile){
+				unsigned char		buffer[4096] = {0};
+				int read ;
+
+				NSMutableData *fileMutableData = [NSMutableData dataWithLength:fileInfo.uncompressedSize];
+				do
+				{
+					read = unzReadCurrentFile(_unzFile, buffer, 4096);
+					if (read >= 0)
+					{
+						if (read != 0)
+						{
+							[fileMutableData appendBytes:buffer length:read];
+						}
+					}
+					else // if (read < 0)
+					{
+						ret = read; // result will be an error code
+						[self OutputErrorMessage:@"Failed to read zip file"];
+					}
+				} while (read > 0);
+				
+				
+				if (fileMutableData.length > 0)
+				{
+					NSData *fileData = [NSData dataWithData:fileMutableData];
+
+					dataAcceptBlock(fileInfo, fileData);
+				}
+			}
+			
+			unzCloseCurrentFile( _unzFile );
+			ret = unzGoToNextFile( _unzFile );
+		}
+    }  while( ret==UNZ_OK );
+    
+    return TRUE;
+}
 
 
 #pragma mark wrapper for delegate
@@ -697,6 +773,10 @@
 
 
 @implementation ZipFileInfo
+
 @synthesize strPath = _strPath;
 @synthesize orgDate = _orgDate;
+@synthesize compressedSize = _compressedSize;
+@synthesize uncompressedSize = _uncompressedSize;
+
 @end
