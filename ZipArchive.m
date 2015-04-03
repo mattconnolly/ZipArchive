@@ -292,7 +292,7 @@
 {
 	// reading data and write to file
 	unz_file_info	fileInfo ={0};
-	ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+	int ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
 	if( ret!=UNZ_OK )
 	{
 		return nil;
@@ -383,7 +383,7 @@
 			}
 
             BOOL isDirectory = isDirectory = [fileInfo.strPath hasSuffix:@"/"];
-            NSString* fullPath = [path stringByAppendingPathComponent:strPath];
+            NSString* fullPath = [path stringByAppendingPathComponent:fileInfo.strPath];
             
             if( isDirectory )
                 [_fileManager createDirectoryAtPath:fullPath withIntermediateDirectories:YES attributes:nil error:nil];
@@ -613,7 +613,6 @@
 		ZipFileInfo *fileInfo = [self currentFileInfo];
 		if (fileInfo == nil){
             [self OutputErrorMessage:@"Error occurs while getting file info"];
-            success = NO;
             unzCloseCurrentFile( _unzFile );
             break;
 		}
