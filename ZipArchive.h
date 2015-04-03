@@ -73,7 +73,7 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 }
 
 @property (nonatomic, copy) NSString *strPath;
-@property (nonatomic, copy) NSDate* orgDate;
+@property (nonatomic, retain) NSDate* orgDate;
 
 @end
 
