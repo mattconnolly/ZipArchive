@@ -470,6 +470,7 @@
             }
         }
 	} while (ret==UNZ_OK);
+
 	return success;
 }
 
@@ -629,7 +630,7 @@
     return [NSArray arrayWithArray:allFilenames];
 }
     
--(BOOL)iterateZipFileContentsWithCheckOpenBlock:(BOOL(^)(ZipFileInfo *))checkOpenBlock dataAcceptBlock:(BOOL(^)(ZipFileInfo *, NSData *))dataAcceptBlock
+-(BOOL)iterateZipFileContentsWithCheckDecompressBlock:(ZipArchiveCheckDecompressBlock)checkDecompressBlock dataAcceptBlock:(ZipArchiveDataAcceptBlock)dataAcceptBlock;
 {
     int ret = unzGoToFirstFile( _unzFile );
     
@@ -660,9 +661,9 @@
                 break;
 			}
 			
-			BOOL openFile = FALSE;
-			if (checkOpenBlock != nil){
-				openFile = checkOpenBlock(fileInfo);
+			BOOL openFile = TRUE;
+			if (checkDecompressBlock != nil){
+				openFile = checkDecompressBlock(fileInfo);
 			}
 
 			if (openFile){

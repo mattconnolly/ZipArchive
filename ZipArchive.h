@@ -24,6 +24,7 @@ typedef NS_ENUM(NSInteger, ZipArchiveCompression) {
  total number of files in the archive is called after each file is processed.
  */
 typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed, unsigned long numFiles);
+
 	
 /**
     @protocol
@@ -80,6 +81,18 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 @property (nonatomic, assign) NSUInteger uncompressedSize;
 
 @end
+
+/**
+ a block that is called by iterateZipFileContentsWithCheckDecompressBlock:dataAcceptBlock that determines whether or not the file in question
+ should be decompressed.
+ */
+ typedef BOOL(^ZipArchiveCheckDecompressBlock)(ZipFileInfo *);
+
+/**
+ a block that is called by iterateZipFileContentsWithCheckDecompressBlock:dataAcceptBlock that determines whether or not the file in question
+ should be decompressed.
+ */
+ typedef void(^ZipArchiveDataAcceptBlock)(ZipFileInfo *, NSData *);
 
 
 /**
@@ -146,7 +159,7 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 // `getZipFileContents` result won't be updated until re-unzip-open after close write handle (`CloseZipFile2` then `UnzipCloseFile` then (`UnzipOpenFile:` or `UnzipOpenFile:Password`) get called).
 -(NSArray*) getZipFileContents;
 
--(BOOL)iterateZipFileContentsWithCheckOpenBlock:(BOOL(^)(ZipFileInfo *))checkOpenBlock dataAcceptBlock:(BOOL(^)(ZipFileInfo *, NSData *))dataAcceptBlock;
+-(BOOL)iterateZipFileContentsWithCheckDecompressBlock:(ZipArchiveCheckDecompressBlock)checkDecompressBlock dataAcceptBlock:(ZipArchiveDataAcceptBlock)dataAcceptBlock;
 
 
 
