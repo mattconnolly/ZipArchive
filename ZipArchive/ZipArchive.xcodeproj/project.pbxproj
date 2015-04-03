@@ -61,6 +61,12 @@
 		C9E8EBF6124F3D030047C862 /* zip.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E8EBEC124F3D030047C862 /* zip.h */; };
 		C9E8EBF9124F3D170047C862 /* ZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E8EBF7124F3D170047C862 /* ZipArchive.h */; settings = {ATTRIBUTES = (); }; };
 		C9E8EBFA124F3D170047C862 /* ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = C9E8EBF8124F3D170047C862 /* ZipArchive.m */; };
+		E255FE4F1ACE49F9002D63F7 /* V3.xml in Resources */ = {isa = PBXBuildFile; fileRef = C95AB35117E1C14A00120861 /* V3.xml */; };
+		E255FE501ACE49FA002D63F7 /* V3.xml in Resources */ = {isa = PBXBuildFile; fileRef = C95AB35117E1C14A00120861 /* V3.xml */; };
+		E255FE511ACE4A02002D63F7 /* V3.png in Resources */ = {isa = PBXBuildFile; fileRef = C95AB35017E1C14A00120861 /* V3.png */; };
+		E255FE521ACE4A03002D63F7 /* V3.png in Resources */ = {isa = PBXBuildFile; fileRef = C95AB35017E1C14A00120861 /* V3.png */; };
+		E255FE531ACE4A06002D63F7 /* hier.zip in Resources */ = {isa = PBXBuildFile; fileRef = E255FE4D1ACE4811002D63F7 /* hier.zip */; };
+		E255FE541ACE4A07002D63F7 /* hier.zip in Resources */ = {isa = PBXBuildFile; fileRef = E255FE4D1ACE4811002D63F7 /* hier.zip */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -135,6 +141,7 @@
 		C9E8EBF7124F3D170047C862 /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipArchive.h; path = ../ZipArchive.h; sourceTree = "<group>"; };
 		C9E8EBF8124F3D170047C862 /* ZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZipArchive.m; path = ../ZipArchive.m; sourceTree = "<group>"; };
 		D2AAC07E0554694100DB518D /* libZipArchive-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libZipArchive-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E255FE4D1ACE4811002D63F7 /* hier.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = hier.zip; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,6 +249,7 @@
 		C95AB34F17E1C14A00120861 /* test-files */ = {
 			isa = PBXGroup;
 			children = (
+				E255FE4D1ACE4811002D63F7 /* hier.zip */,
 				C95AB35017E1C14A00120861 /* V3.png */,
 				C95AB35117E1C14A00120861 /* V3.xml */,
 			);
@@ -483,6 +491,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E255FE511ACE4A02002D63F7 /* V3.png in Resources */,
+				E255FE531ACE4A06002D63F7 /* hier.zip in Resources */,
+				E255FE4F1ACE49F9002D63F7 /* V3.xml in Resources */,
 				C95AB36317E1C37800120861 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -491,6 +502,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E255FE521ACE4A03002D63F7 /* V3.png in Resources */,
+				E255FE541ACE4A07002D63F7 /* hier.zip in Resources */,
+				E255FE501ACE49FA002D63F7 /* V3.xml in Resources */,
 				C95AB37B17E1C47D00120861 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

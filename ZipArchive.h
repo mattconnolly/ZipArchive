@@ -61,6 +61,25 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 
 /**
     @class
+    @brief      An object that contains information about a file in a zip archive.
+                 
+    It also provides methods to expand an existing archive file (optionally with a password),
+    and extract the files.
+*/
+
+@interface ZipFileInfo : NSObject {
+	NSString*				_strPath;
+	NSDate*					_orgDate;
+}
+
+@property (nonatomic, copy) NSString *strPath;
+@property (nonatomic, retain) NSDate* orgDate;
+
+@end
+
+
+/**
+    @class
     @brief      An object that can create zip files and expand existing ones.
     This class provides methods to create a zip file (optionally with a password) and
     add files to that zip archive. 
