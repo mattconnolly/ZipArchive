@@ -474,162 +474,12 @@
 	return success;
 }
 
--(NSDictionary *)UnzipFileToMemory
-{
-    NSMutableDictionary *fileDictionary = [NSMutableDictionary dictionary];
-    
-    BOOL success = YES;
-    int index = 0;
-    int progress = -1;
-    int ret = unzGoToFirstFile( _unzFile );
-    unsigned char		buffer[4096] = {0};
-    if( ret!=UNZ_OK )
-    {
-        [self OutputErrorMessage:@"Failed"];
-    }
-    
-    const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
-    
-    do{
-        @autoreleasepool {
-            if( [_password length]==0 )
-                ret = unzOpenCurrentFile( _unzFile );
-            else
-                ret = unzOpenCurrentFilePassword( _unzFile, password );
-            if( ret!=UNZ_OK )
-            {
-                [self OutputErrorMessage:@"Error occurs"];
-                success = NO;
-                break;
-            }
-            // reading data and copy to memory
-			ZipFileInfo *fileInfo = [self currentFileInfo];
-			if (fileInfo == nil){
-                [self OutputErrorMessage:@"Error occurs while getting file info"];
-                success = NO;
-                unzCloseCurrentFile( _unzFile );
-                break;
-			}
-
-            int read ;
-            NSMutableData *fileMutableData = [NSMutableData data];
-            do
-            {
-                read = unzReadCurrentFile(_unzFile, buffer, 4096);
-                if (read >= 0)
-                {
-                    if (read != 0)
-                    {
-                        [fileMutableData appendBytes:buffer length:read];
-                    }
-                }
-                else // if (read < 0)
-                {
-                    ret = read; // result will be an error code
-                    success = NO;
-                    [self OutputErrorMessage:@"Failed to read zip file"];
-                }
-            } while (read > 0);
-            
-            
-            if (fileMutableData.length > 0)
-            {
-                NSData *fileData = [NSData dataWithData:fileMutableData];
-                [fileDictionary setObject:fileData forKey:fileInfo.strPath];
-            }
-            
-            if (ret == UNZ_OK) {
-                ret = unzCloseCurrentFile( _unzFile );
-                if (ret != UNZ_OK) {
-                    [self OutputErrorMessage:@"file was unzipped but failed crc check"];
-                    success = NO;
-                }
-            }
-            
-            if (ret == UNZ_OK) {
-                ret = unzGoToNextFile( _unzFile );
-            }
-            
-            if (_progressBlock && _numFiles) {
-                index++;
-                int p = index*100/_numFiles;
-                progress = p;
-                _progressBlock(progress, index, _numFiles);
-            }
-        }
-    } while (ret==UNZ_OK);
-    
-    NSDictionary *resultDictionary = [NSDictionary dictionaryWithDictionary:fileDictionary];
-    return resultDictionary;
-}
-
 /**
- * Close the zip file.
+ * Iterate over the contents of a zip file. Call block function per entry to decide whether or not to decompress, and to actually get the data of the file.
  *
- * @returns BOOL YES on success
+ * @returns NSArray list of filenames (including directories) in the zip archive. 
  */
 
--(BOOL) UnzipCloseFile
-{
-	self.password = nil;
-	if( _unzFile ) {
-		int err = unzClose( _unzFile );
-        _unzFile = nil;
-        return err ==UNZ_OK;
-    }
-	return YES;
-}
-
-
-/**
- * Return a list of filenames that are in the zip archive. 
- * No path information is available as this can be called before the zip is expanded.
- *
- * @returns NSArray list of filenames in the zip archive. 
- */
-
--(NSArray*) getZipFileContents     // list the contents of the zip archive. must be called after UnzipOpenFile
-{
-    int ret = unzGoToFirstFile( _unzFile );
-    NSMutableArray * allFilenames = [NSMutableArray arrayWithCapacity:40];
-    
-    if( ret!=UNZ_OK )
-    {
-        [self OutputErrorMessage:@"Failed"];
-    }
-    
-    const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
-    
-    do{
-        if( [_password length]==0 )
-            ret = unzOpenCurrentFile( _unzFile );
-        else
-            ret = unzOpenCurrentFilePassword( _unzFile, password );
-        if( ret!=UNZ_OK )
-        {
-            [self OutputErrorMessage:@"Error occured"];
-            break;
-        }
-        
-        // Just get the file info
-		ZipFileInfo *fileInfo = [self currentFileInfo];
-		if (fileInfo == nil){
-            [self OutputErrorMessage:@"Error occurs while getting file info"];
-            unzCloseCurrentFile( _unzFile );
-            break;
-		}
-
-        // Copy name to array
-        [allFilenames addObject:fileInfo.strPath];
-        
-        unzCloseCurrentFile( _unzFile );
-        ret = unzGoToNextFile( _unzFile );
-    }  while( ret==UNZ_OK);
-    
-    // return an immutable array.
-    return [NSArray arrayWithArray:allFilenames];
-}
-    
 -(BOOL)iterateZipFileContentsWithCheckDecompressBlock:(ZipArchiveCheckDecompressBlock)checkDecompressBlock dataAcceptBlock:(ZipArchiveDataAcceptBlock)dataAcceptBlock;
 {
     int ret = unzGoToFirstFile( _unzFile );
@@ -668,7 +518,7 @@
 
 			if (openFile){
 				unsigned char		buffer[4096] = {0};
-				int read ;
+				int read;
 
 				NSMutableData *fileMutableData = [NSMutableData dataWithLength:fileInfo.uncompressedSize];
 				do
@@ -704,6 +554,77 @@
     
     return TRUE;
 }
+
+/**
+ * Unzip the contents of a zip archive to a data structure.
+ *
+ * @returns NSDictionary with an entry for each file that has a non-zero size, with the key being the filename and the value an NSData object with the contents.
+ */
+
+-(NSDictionary *)UnzipFileToMemory
+{
+    NSMutableDictionary *fileDictionary = [NSMutableDictionary dictionary];
+
+    [ self iterateZipFileContentsWithCheckDecompressBlock:^(ZipFileInfo* zipFileInfo)
+        {
+            BOOL ret = (zipFileInfo.compressedSize > 0);
+            return ret;
+        }
+                                          dataAcceptBlock:^(ZipFileInfo* zipFileInfo, NSData* data)
+        {
+            [fileDictionary setObject:data forKey:zipFileInfo.strPath];
+
+            if (_progressBlock && _numFiles){
+                NSUInteger index = [fileDictionary count];
+                NSUInteger progress = (index*100)/_numFiles;
+                _progressBlock(progress, index, _numFiles);
+            }
+        }
+     ];
+    
+    NSDictionary *resultDictionary = [NSDictionary dictionaryWithDictionary:fileDictionary];
+    return resultDictionary;
+}
+
+/**
+ * Return a list of filenames that are in the zip archive. 
+ *
+ * @returns NSArray list of filenames (including directories) in the zip archive. 
+ */
+
+-(NSArray*) getZipFileContents     // list the contents of the zip archive. must be called after UnzipOpenFile
+{
+    NSMutableArray * allFileNames = [NSMutableArray arrayWithCapacity:40];
+    
+    [ self iterateZipFileContentsWithCheckDecompressBlock:^(ZipFileInfo* zipFileInfo)
+        {
+            [allFileNames addObject:zipFileInfo.strPath];
+            return NO;
+        }
+                                          dataAcceptBlock:nil
+     ];
+    
+    return [NSArray arrayWithArray:allFileNames];
+}
+
+/**
+ * Close the zip file.
+ *
+ * @returns BOOL YES on success
+ */
+
+-(BOOL) UnzipCloseFile
+{
+	self.password = nil;
+	if( _unzFile ) {
+		int err = unzClose( _unzFile );
+        _unzFile = nil;
+        return err ==UNZ_OK;
+    }
+	return YES;
+}
+
+    
 
 
 #pragma mark wrapper for delegate

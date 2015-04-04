@@ -163,6 +163,19 @@ const NSUInteger NUM_FILES = 10;
 
 }
 
+- (void)testUnzipToMemory
+{
+    NSBundle* bundle = [NSBundle bundleForClass:[self class]];
+    NSString* hierFilePath = [bundle pathForResource:@"hier" ofType:@"zip"];
+    XCTAssertTrue(hierFilePath != nil, @"specific file found: hier.zip");
+
+    ZipArchive* zip = [[ZipArchive alloc] init];
+    [zip UnzipOpenFile:hierFilePath];
+    NSDictionary * unzippedContents = [zip UnzipFileToMemory];
+    
+    XCTAssertTrue([unzippedContents count] == 2, @"dictionary has right number of entries");
+}
+
 
 -(void) ErrorMessage:(NSString*) msg
 {
