@@ -480,7 +480,7 @@
  * @returns NSArray list of filenames (including directories) in the zip archive. 
  */
 
--(BOOL)iterateZipFileContentsWithCheckDecompressBlock:(ZipArchiveCheckDecompressBlock)checkDecompressBlock dataAcceptBlock:(ZipArchiveDataAcceptBlock)dataAcceptBlock;
+-(BOOL)enumerateZipFileContentsWithCheckDecompressBlock:(ZipArchiveCheckDecompressBlock)checkDecompressBlock dataAcceptBlock:(ZipArchiveDataAcceptBlock)dataAcceptBlock;
 {
     int ret = unzGoToFirstFile( _unzFile );
     
@@ -565,7 +565,7 @@
 {
     NSMutableDictionary *fileDictionary = [NSMutableDictionary dictionary];
 
-    [ self iterateZipFileContentsWithCheckDecompressBlock:^(ZipFileInfo* zipFileInfo)
+    [ self enumerateZipFileContentsWithCheckDecompressBlock:^(ZipFileInfo* zipFileInfo)
         {
             BOOL ret = (zipFileInfo.compressedSize > 0);
             return ret;
@@ -596,7 +596,7 @@
 {
     NSMutableArray * allFileNames = [NSMutableArray arrayWithCapacity:40];
     
-    [ self iterateZipFileContentsWithCheckDecompressBlock:^(ZipFileInfo* zipFileInfo)
+    [ self enumerateZipFileContentsWithCheckDecompressBlock:^(ZipFileInfo* zipFileInfo)
         {
             [allFileNames addObject:zipFileInfo.strPath];
             return NO;

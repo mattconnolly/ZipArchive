@@ -83,13 +83,13 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 @end
 
 /**
- a block that is called by iterateZipFileContentsWithCheckDecompressBlock:dataAcceptBlock that determines whether or not the file in question
+ a block that is called by enumerateZipFileContentsWithCheckDecompressBlock:dataAcceptBlock that determines whether or not the file in question
  should be decompressed.
  */
  typedef BOOL(^ZipArchiveCheckDecompressBlock)(ZipFileInfo *);
 
 /**
- a block that is called by iterateZipFileContentsWithCheckDecompressBlock:dataAcceptBlock that determines whether or not the file in question
+ a block that is called by enumerateZipFileContentsWithCheckDecompressBlock:dataAcceptBlock that determines whether or not the file in question
  should be decompressed.
  */
  typedef void(^ZipArchiveDataAcceptBlock)(ZipFileInfo *, NSData *);
@@ -150,7 +150,7 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 -(BOOL) UnzipOpenFile:(NSString*) zipFile;
 -(BOOL) UnzipOpenFile:(NSString*) zipFile Password:(NSString*) password;
 -(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite;
--(BOOL)iterateZipFileContentsWithCheckDecompressBlock:(ZipArchiveCheckDecompressBlock)checkDecompressBlock dataAcceptBlock:(ZipArchiveDataAcceptBlock)dataAcceptBlock;
+-(BOOL)enumerateZipFileContentsWithCheckDecompressBlock:(ZipArchiveCheckDecompressBlock)checkDecompressBlock dataAcceptBlock:(ZipArchiveDataAcceptBlock)dataAcceptBlock;
 -(NSDictionary *)UnzipFileToMemory; 
 
 // List the contents of the zip archive. Must be called after UnzipOpenFile.
