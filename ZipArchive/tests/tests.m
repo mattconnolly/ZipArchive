@@ -126,6 +126,56 @@ const NSUInteger NUM_FILES = 10;
     XCTAssertTrue(count == 0, @"files extracted successfully");
 }
 
+- (void)testExpandHierarchicalZip
+{
+    NSBundle* bundle = [NSBundle bundleForClass:[self class]];
+    NSString* hierFilePath = [bundle pathForResource:@"hier" ofType:@"zip"];
+    XCTAssertTrue(hierFilePath != nil, @"specific file found: hier.zip");
+
+    // unzip normal zip
+    NSFileManager* fm = [NSFileManager defaultManager];
+    
+    ZipArchive* zip = [[ZipArchive alloc] init];
+    [zip UnzipOpenFile:hierFilePath];
+    NSArray* contents = [zip getZipFileContents];
+    XCTAssertTrue(contents && contents.count == 6, @"zip files has right number of contents");
+    NSString* outputDir = [self tempDir];
+    [zip UnzipFileTo:outputDir overWrite:YES];
+
+    NSUInteger fileCount = 0;
+    NSUInteger dirCount = 0;
+
+    NSDirectoryEnumerator* dirEnum = [fm enumeratorAtPath:outputDir];
+    NSString* file;
+    NSError* error = nil;
+    while ((file = [dirEnum nextObject])) {
+        NSString* fullPath = [outputDir stringByAppendingPathComponent:file];
+        NSDictionary* attrs = [fm attributesOfItemAtPath:fullPath error:&error];
+        
+        if ( [[attrs objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeRegular"] )
+            fileCount += 1;
+        if ( [[attrs objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"] )
+            dirCount += 1;
+
+    }
+    XCTAssertTrue(fileCount == 3, @"files extracted successfully");
+    XCTAssertTrue(dirCount == 3, @"directories extracted successfully");
+
+}
+
+- (void)testUnzipToMemory
+{
+    NSBundle* bundle = [NSBundle bundleForClass:[self class]];
+    NSString* hierFilePath = [bundle pathForResource:@"hier" ofType:@"zip"];
+    XCTAssertTrue(hierFilePath != nil, @"specific file found: hier.zip");
+
+    ZipArchive* zip = [[ZipArchive alloc] init];
+    [zip UnzipOpenFile:hierFilePath];
+    NSDictionary * unzippedContents = [zip UnzipFileToMemory];
+    
+    XCTAssertTrue([unzippedContents count] == 2, @"dictionary has right number of entries");
+}
+
 
 -(void) ErrorMessage:(NSString*) msg
 {
@@ -217,7 +267,10 @@ const NSUInteger NUM_FILES = 10;
     NSString* path = [[NSBundle bundleForClass:[self class]] bundlePath];
     NSArray* testFiles = @[@"V3.png", @"V3.xml"];
     for (NSString *fileName in testFiles) {
-        NSString* theFilePath = [path stringByAppendingPathComponent:fileName];
+        NSBundle* bundle = [NSBundle bundleForClass:[self class]];
+        NSString* theFilePath = [bundle pathForResource:fileName ofType:nil];
+        XCTAssertTrue(theFilePath != nil, @"specific file found: %@", fileName);
+
         [theZip addFileToZip:theFilePath newname:[theFilePath lastPathComponent]];
     }
     

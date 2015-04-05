@@ -14,10 +14,10 @@
 #include "minizip/zip.h"
 #include "minizip/unzip.h"
 
-
 @interface NSFileManager(ZipArchive)
 - (NSDictionary *)_attributesOfItemAtPath:(NSString *)path followingSymLinks:(BOOL)followingSymLinks error:(NSError **)error;
 @end
+
 
 @interface ZipArchive ()
 
@@ -272,6 +272,67 @@
 	return [self UnzipOpenFile:zipFile];
 }
 
+
+// Helper function to replace all \ with /
+-(NSString *)strPathWithCString:(char *)filename
+{
+	NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
+
+	if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
+	{
+		strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+	}
+
+	return strPath;
+}
+
+-(ZipFileInfo *)currentFileInfo
+{
+	// get compressed file info
+	unz_file_info	fileInfo ={0};
+	int ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+	if( ret!=UNZ_OK )
+	{
+		return nil;
+	}
+	ZipFileInfo* zipFileInfo = [[[ZipFileInfo alloc] init] autorelease];
+
+	char* filename = (char*) malloc( fileInfo.size_filename +1 );
+	unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
+	filename[fileInfo.size_filename] = '\0';
+
+	zipFileInfo.strPath = [self strPathWithCString:filename];
+	free(filename);
+
+    zipFileInfo.compressedSize = fileInfo.compressed_size;
+    zipFileInfo.uncompressedSize = fileInfo.uncompressed_size;
+
+	// set the orignal datetime property
+	if( fileInfo.tmu_date.tm_year!=0 )
+	{
+		NSDateComponents* components = [[NSDateComponents alloc] init];
+		components.second = fileInfo.tmu_date.tm_sec;
+		components.minute = fileInfo.tmu_date.tm_min;
+		components.hour = fileInfo.tmu_date.tm_hour;
+		components.day = fileInfo.tmu_date.tm_mday;
+		components.month = fileInfo.tmu_date.tm_mon + 1;
+		components.year = fileInfo.tmu_date.tm_year;
+			
+		NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+
+		zipFileInfo.orgDate = [gregorianCalendar dateFromComponents:components];
+
+		[components release];
+		[gregorianCalendar release];
+	}
+	else
+	{
+		zipFileInfo.orgDate = nil;
+	}
+
+	return zipFileInfo;
+}
+
 /**
  * Expand all files in the zip archive into the specified directory.
  *
@@ -313,37 +374,24 @@
                 break;
             }
             // reading data and write to file
-            int read ;
-            unz_file_info	fileInfo ={0};
-            ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-            if( ret!=UNZ_OK )
-            {
+
+			ZipFileInfo *fileInfo = [self currentFileInfo];
+			if (fileInfo == nil){
                 [self OutputErrorMessage:@"Error occurs while getting file info"];
                 success = NO;
                 unzCloseCurrentFile( _unzFile );
                 break;
-            }
-            char* filename = (char*) malloc( fileInfo.size_filename +1 );
-            unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
-            filename[fileInfo.size_filename] = '\0';
-            
-            // check if it contains directory
-            NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
-            BOOL isDirectory = NO;
-            if( filename[fileInfo.size_filename-1]=='/' || filename[fileInfo.size_filename-1]=='\\')
-                isDirectory = YES;
-            free( filename );
-            if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
-            {// contains a path
-                strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-            }
-            NSString* fullPath = [path stringByAppendingPathComponent:strPath];
+			}
+
+            BOOL isDirectory = isDirectory = [fileInfo.strPath hasSuffix:@"/"];
+            NSString* fullPath = [path stringByAppendingPathComponent:fileInfo.strPath];
             
             if( isDirectory )
                 [_fileManager createDirectoryAtPath:fullPath withIntermediateDirectories:YES attributes:nil error:nil];
             else
                 [_fileManager createDirectoryAtPath:[fullPath stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:nil];
             
+            int read ;
             FILE* fp = NULL;
             do
             {
@@ -384,23 +432,10 @@
                 // add the full path of this file to the output array
                 [(NSMutableArray*)_unzippedFiles addObject:fullPath];
                 
-                // set the orignal datetime property
-                if( fileInfo.tmu_date.tm_year!=0 )
+                // set the original datetime property
+                if( fileInfo.orgDate != nil)
                 {
-                    NSDateComponents* components = [[NSDateComponents alloc] init];
-                    components.second = fileInfo.tmu_date.tm_sec;
-                    components.minute = fileInfo.tmu_date.tm_min;
-                    components.hour = fileInfo.tmu_date.tm_hour;
-                    components.day = fileInfo.tmu_date.tm_mday;
-                    components.month = fileInfo.tmu_date.tm_mon + 1;
-                    components.year = fileInfo.tmu_date.tm_year;
-                    
-                    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-                    NSDate* orgDate = [[gregorianCalendar dateFromComponents:components] retain];
-                    [components release];
-                    [gregorianCalendar release];
-                    
-                    NSDictionary* attr = [NSDictionary dictionaryWithObject:orgDate forKey:NSFileModificationDate]; //[_fileManager fileAttributesAtPath:fullPath traverseLink:YES];
+                    NSDictionary* attr = [NSDictionary dictionaryWithObject:fileInfo.orgDate forKey:NSFileModificationDate]; //[_fileManager fileAttributesAtPath:fullPath traverseLink:YES];
                     if( attr )
                     {
                         //	[attr  setValue:orgDate forKey:NSFileCreationDate];
@@ -411,8 +446,6 @@
                         }
                         
                     }
-                    [orgDate release];
-                    orgDate = nil;
                 }
                 
             }
@@ -436,19 +469,21 @@
                 _progressBlock(progress, index, _numFiles);
             }
         }
-	} while (ret==UNZ_OK && ret!=UNZ_END_OF_LIST_OF_FILE);
+	} while (ret==UNZ_OK);
+
 	return success;
 }
 
--(NSDictionary *)UnzipFileToMemory
+/**
+ * Iterate over the contents of a zip file. Call block function per entry to decide whether or not to decompress, and to actually get the data of the file.
+ *
+ * @returns NSArray list of filenames (including directories) in the zip archive. 
+ */
+
+-(BOOL)enumerateZipFileContentsWithCheckDecompressBlock:(ZipArchiveCheckDecompressBlock)checkDecompressBlock dataAcceptBlock:(ZipArchiveDataAcceptBlock)dataAcceptBlock;
 {
-    NSMutableDictionary *fileDictionary = [NSMutableDictionary dictionary];
-    
-    BOOL success = YES;
-    int index = 0;
-    int progress = -1;
     int ret = unzGoToFirstFile( _unzFile );
-    unsigned char		buffer[4096] = {0};
+    
     if( ret!=UNZ_OK )
     {
         [self OutputErrorMessage:@"Failed"];
@@ -457,89 +492,119 @@
     const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
     
     do{
-        @autoreleasepool {
-            if( [_password length]==0 )
-                ret = unzOpenCurrentFile( _unzFile );
-            else
-                ret = unzOpenCurrentFilePassword( _unzFile, password );
-            if( ret!=UNZ_OK )
-            {
-                [self OutputErrorMessage:@"Error occurs"];
-                success = NO;
-                break;
-            }
-            // reading data and write to file
-            int read ;
-            unz_file_info	fileInfo ={0};
-            ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-            if( ret!=UNZ_OK )
-            {
+		@autoreleasepool {
+			if( [_password length]==0 )
+				ret = unzOpenCurrentFile( _unzFile );
+			else
+				ret = unzOpenCurrentFilePassword( _unzFile, password );
+			if( ret!=UNZ_OK )
+			{
+				[self OutputErrorMessage:@"Error occured"];
+				break;
+			}
+
+            // reading data and copy to memory, file by file.
+			ZipFileInfo *fileInfo = [self currentFileInfo];
+			if (fileInfo == nil){
                 [self OutputErrorMessage:@"Error occurs while getting file info"];
-                success = NO;
                 unzCloseCurrentFile( _unzFile );
                 break;
-            }
-            char* filename = (char*) malloc( fileInfo.size_filename +1 );
-            unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
-            filename[fileInfo.size_filename] = '\0';
-            
-            // check if it contains directory
-            NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
-            free( filename );
-            if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
-            {// contains a path
-                strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-            }
-            
-            NSMutableData *fileMutableData = [NSMutableData data];
-            do
-            {
-                read = unzReadCurrentFile(_unzFile, buffer, 4096);
-                if (read >= 0)
-                {
-                    if (read != 0)
-                    {
-                        [fileMutableData appendBytes:buffer length:read];
-                    }
-                }
-                else // if (read < 0)
-                {
-                    ret = read; // result will be an error code
-                    success = NO;
-                    [self OutputErrorMessage:@"Failed to read zip file"];
-                }
-            } while (read > 0);
-            
-            
-            if (fileMutableData.length > 0)
-            {
-                NSData *fileData = [NSData dataWithData:fileMutableData];
-                [fileDictionary setObject:fileData forKey:strPath];
-            }
-            
-            if (ret == UNZ_OK) {
-                ret = unzCloseCurrentFile( _unzFile );
-                if (ret != UNZ_OK) {
-                    [self OutputErrorMessage:@"file was unzipped but failed crc check"];
-                    success = NO;
-                }
-            }
-            
-            if (ret == UNZ_OK) {
-                ret = unzGoToNextFile( _unzFile );
-            }
-            
-            if (_progressBlock && _numFiles) {
-                index++;
-                int p = index*100/_numFiles;
-                progress = p;
+			}
+			
+			BOOL openFile = TRUE;
+			if (checkDecompressBlock != nil){
+				openFile = checkDecompressBlock(fileInfo);
+			}
+
+			if (openFile){
+				unsigned char		buffer[4096] = {0};
+				int read;
+
+				NSMutableData *fileMutableData = [NSMutableData dataWithLength:fileInfo.uncompressedSize];
+				do
+				{
+					read = unzReadCurrentFile(_unzFile, buffer, 4096);
+					if (read >= 0)
+					{
+						if (read != 0)
+						{
+							[fileMutableData appendBytes:buffer length:read];
+						}
+					}
+					else // if (read < 0)
+					{
+						ret = read; // result will be an error code
+						[self OutputErrorMessage:@"Failed to read zip file"];
+					}
+				} while (read > 0);
+				
+				
+				if (fileMutableData.length > 0)
+				{
+					NSData *fileData = [NSData dataWithData:fileMutableData];
+
+					dataAcceptBlock(fileInfo, fileData);
+				}
+			}
+			
+			unzCloseCurrentFile( _unzFile );
+			ret = unzGoToNextFile( _unzFile );
+		}
+    }  while( ret==UNZ_OK );
+    
+    return TRUE;
+}
+
+/**
+ * Unzip the contents of a zip archive to a data structure.
+ *
+ * @returns NSDictionary with an entry for each file that has a non-zero size, with the key being the filename and the value an NSData object with the contents.
+ */
+
+-(NSDictionary *)UnzipFileToMemory
+{
+    NSMutableDictionary *fileDictionary = [NSMutableDictionary dictionary];
+
+    [ self enumerateZipFileContentsWithCheckDecompressBlock:^(ZipFileInfo* zipFileInfo)
+        {
+            BOOL ret = (zipFileInfo.compressedSize > 0);
+            return ret;
+        }
+                                          dataAcceptBlock:^(ZipFileInfo* zipFileInfo, NSData* data)
+        {
+            [fileDictionary setObject:data forKey:zipFileInfo.strPath];
+
+            if (_progressBlock && _numFiles){
+                NSUInteger index = [fileDictionary count];
+                NSUInteger progress = (index*100)/_numFiles;
                 _progressBlock(progress, index, _numFiles);
             }
         }
-    } while (ret==UNZ_OK && ret!=UNZ_END_OF_LIST_OF_FILE);
+     ];
     
     NSDictionary *resultDictionary = [NSDictionary dictionaryWithDictionary:fileDictionary];
     return resultDictionary;
+}
+
+/**
+ * Return a list of filenames that are in the zip archive. 
+ *
+ * @returns NSArray list of filenames (including directories) in the zip archive. 
+ */
+
+-(NSArray*) getZipFileContents     // list the contents of the zip archive. must be called after UnzipOpenFile
+{
+    NSMutableArray * allFileNames = [NSMutableArray arrayWithCapacity:40];
+    
+    [ self enumerateZipFileContentsWithCheckDecompressBlock:^(ZipFileInfo* zipFileInfo)
+        {
+            [allFileNames addObject:zipFileInfo.strPath];
+            return NO;
+        }
+                                          dataAcceptBlock:nil
+     ];
+    
+    return [NSArray arrayWithArray:allFileNames];
 }
 
 /**
@@ -559,68 +624,7 @@
 	return YES;
 }
 
-
-/**
- * Return a list of filenames that are in the zip archive. 
- * No path information is available as this can be called before the zip is expanded.
- *
- * @returns NSArray list of filenames in the zip archive. 
- */
-
--(NSArray*) getZipFileContents     // list the contents of the zip archive. must be called after UnzipOpenFile
-{
-    int ret = unzGoToFirstFile( _unzFile );
-    NSMutableArray * allFilenames = [NSMutableArray arrayWithCapacity:40];
     
-    if( ret!=UNZ_OK )
-    {
-        [self OutputErrorMessage:@"Failed"];
-    }
-    
-    const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
-    
-    do{
-        if( [_password length]==0 )
-            ret = unzOpenCurrentFile( _unzFile );
-        else
-            ret = unzOpenCurrentFilePassword( _unzFile, password );
-        if( ret!=UNZ_OK )
-        {
-            [self OutputErrorMessage:@"Error occured"];
-            break;
-        }
-        
-        // reading data and write to file
-        unz_file_info   fileInfo ={0};
-        ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-        if( ret!=UNZ_OK )
-        {
-            [self OutputErrorMessage:@"Error occurs while getting file info"];
-            unzCloseCurrentFile( _unzFile );
-            break;
-        }
-        char* filename = (char*) malloc( fileInfo.size_filename +1 );
-        unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
-        filename[fileInfo.size_filename] = '\0';
-        
-        // check if it contains directory
-        NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
-        free( filename );
-        if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
-        {// contains a path
-            strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-        }
-        
-        // Copy name to array
-        [allFilenames addObject:strPath];
-        
-        unzCloseCurrentFile( _unzFile );
-        ret = unzGoToNextFile( _unzFile );
-    }  while( ret==UNZ_OK && UNZ_OK!=UNZ_END_OF_LIST_OF_FILE );
-    
-    // return an immutable array.
-    return [NSArray arrayWithArray:allFilenames];
-}
 
 
 #pragma mark wrapper for delegate
@@ -689,3 +693,12 @@
 
 @end
 
+
+@implementation ZipFileInfo
+
+@synthesize strPath = _strPath;
+@synthesize orgDate = _orgDate;
+@synthesize compressedSize = _compressedSize;
+@synthesize uncompressedSize = _uncompressedSize;
+
+@end

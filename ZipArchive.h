@@ -24,6 +24,7 @@ typedef NS_ENUM(NSInteger, ZipArchiveCompression) {
  total number of files in the archive is called after each file is processed.
  */
 typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed, unsigned long numFiles);
+
 	
 /**
     @protocol
@@ -61,6 +62,41 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 
 /**
     @class
+    @brief      An object that contains information about a file in a zip archive.
+                 
+    It also provides methods to expand an existing archive file (optionally with a password),
+    and extract the files.
+*/
+
+@interface ZipFileInfo : NSObject {
+	NSString*				_strPath;
+	NSDate*					_orgDate;
+        NSUInteger                              _compressedSize;
+        NSUInteger                              _uncompressedSize;
+}
+
+@property (nonatomic, copy) NSString *strPath;
+@property (nonatomic, retain) NSDate* orgDate;
+@property (nonatomic, assign) NSUInteger compressedSize;
+@property (nonatomic, assign) NSUInteger uncompressedSize;
+
+@end
+
+/**
+ a block that is called by enumerateZipFileContentsWithCheckDecompressBlock:dataAcceptBlock that determines whether or not the file in question
+ should be decompressed.
+ */
+ typedef BOOL(^ZipArchiveCheckDecompressBlock)(ZipFileInfo *);
+
+/**
+ a block that is called by enumerateZipFileContentsWithCheckDecompressBlock:dataAcceptBlock that determines whether or not the file in question
+ should be decompressed.
+ */
+ typedef void(^ZipArchiveDataAcceptBlock)(ZipFileInfo *, NSData *);
+
+
+/**
+    @class
     @brief      An object that can create zip files and expand existing ones.
     This class provides methods to create a zip file (optionally with a password) and
     add files to that zip archive. 
@@ -84,6 +120,7 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
     NSFileManager* _fileManager;
     NSStringEncoding _stringEncoding;
 }
+
 
 /** a delegate object conforming to ZipArchiveDelegate protocol */
 @property (nonatomic, retain) id<ZipArchiveDelegate> delegate;
@@ -113,12 +150,15 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 -(BOOL) UnzipOpenFile:(NSString*) zipFile;
 -(BOOL) UnzipOpenFile:(NSString*) zipFile Password:(NSString*) password;
 -(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite;
--(NSDictionary *)UnzipFileToMemory;//To avoid memory issue, only use this method for small zip files.
--(BOOL) UnzipCloseFile;
+-(BOOL)enumerateZipFileContentsWithCheckDecompressBlock:(ZipArchiveCheckDecompressBlock)checkDecompressBlock dataAcceptBlock:(ZipArchiveDataAcceptBlock)dataAcceptBlock;
+-(NSDictionary *)UnzipFileToMemory; 
 
-// List the contents of the zip archive. must be called after UnzipOpenFile.
+// List the contents of the zip archive. Must be called after UnzipOpenFile.
 // If zip file was appended with `CreateZipFile2:append:` or ``CreateZipFile2:Password:append:`,
 // `getZipFileContents` result won't be updated until re-unzip-open after close write handle (`CloseZipFile2` then `UnzipCloseFile` then (`UnzipOpenFile:` or `UnzipOpenFile:Password`) get called).
 -(NSArray*) getZipFileContents;
+
+-(BOOL) UnzipCloseFile;
+
 
 @end

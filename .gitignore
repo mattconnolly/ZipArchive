@@ -1,6 +1,7 @@
 ZipArchive/build
 *.pbxuser
 *.mode1v3
+.*.swp
 
 .DS_Store
 xcuserdata/
