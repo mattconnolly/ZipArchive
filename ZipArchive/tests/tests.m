@@ -174,6 +174,7 @@ const NSUInteger NUM_FILES = 10;
     NSDictionary * unzippedContents = [zip UnzipFileToMemory];
     
     XCTAssertTrue([unzippedContents count] == 2, @"dictionary has right number of entries");
+    XCTAssertTrue([[unzippedContents objectForKey:@"hier/hello_world.txt"] length] == 13, @"hier/hello_world.txt has the right number of bytes");
 }
 
 

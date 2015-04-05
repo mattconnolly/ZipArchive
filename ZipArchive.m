@@ -520,7 +520,7 @@
 				unsigned char		buffer[4096] = {0};
 				int read;
 
-				NSMutableData *fileMutableData = [NSMutableData dataWithLength:fileInfo.uncompressedSize];
+                NSMutableData *fileMutableData = [NSMutableData dataWithCapacity:fileInfo.uncompressedSize];
 				do
 				{
 					read = unzReadCurrentFile(_unzFile, buffer, 4096);
