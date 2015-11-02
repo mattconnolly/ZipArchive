@@ -51,6 +51,7 @@
         _fileManager = fileManager;
         self.stringEncoding = NSUTF8StringEncoding;
         self.compression = ZipArchiveCompressionDefault;
+        self.needUpdateFileModificationDate = YES;
 	}
 	return self;
 }
@@ -385,7 +386,7 @@
                 [(NSMutableArray*)_unzippedFiles addObject:fullPath];
                 
                 // set the orignal datetime property
-                if( fileInfo.tmu_date.tm_year!=0 )
+                if(self.needUpdateFileModificationDate && fileInfo.tmu_date.tm_year!=0 )
                 {
                     NSDateComponents* components = [[NSDateComponents alloc] init];
                     components.second = fileInfo.tmu_date.tm_sec;

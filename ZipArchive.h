@@ -92,6 +92,9 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 
 @property (nonatomic, assign) ZipArchiveCompression compression;
 
+/** Do you need to update the file modification time? This operation is a little time-consuming.*/
+@property (nonatomic, assign) BOOL needUpdateFileModificationDate;
+
 /**
     @brief      String encoding to be used when interpreting file names in the zip file.
 */
