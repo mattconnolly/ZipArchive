@@ -86,7 +86,7 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
 }
 
 /** a delegate object conforming to ZipArchiveDelegate protocol */
-@property (nonatomic, retain) id<ZipArchiveDelegate> delegate;
+@property (nonatomic, weak) id<ZipArchiveDelegate> delegate;
 @property (nonatomic, readonly) unsigned long numFiles;
 @property (nonatomic, copy) ZipArchiveProgressUpdateBlock progressBlock;
 

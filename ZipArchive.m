@@ -63,7 +63,6 @@
     
     // release retained/copied properties.
     [_password release];
-    [_delegate release];
     [_unzippedFiles release];
     
 	[super dealloc];
