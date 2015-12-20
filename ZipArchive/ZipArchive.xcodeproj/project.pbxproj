@@ -103,7 +103,6 @@
 		C95AB36017E1C37800120861 /* ZipArchive ios Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZipArchive ios Tests-Info.plist"; sourceTree = "<group>"; };
 		C95AB36217E1C37800120861 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C95AB36617E1C37800120861 /* ZipArchive ios Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZipArchive ios Tests-Prefix.pch"; sourceTree = "<group>"; };
-		C95AB36E17E1C44200120861 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
 		C95AB37417E1C47D00120861 /* ZipArchive mac Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ZipArchive mac Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C95AB37817E1C47D00120861 /* ZipArchive mac Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZipArchive mac Tests-Info.plist"; sourceTree = "<group>"; };
 		C95AB37A17E1C47D00120861 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -201,7 +200,6 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C95AB36E17E1C44200120861 /* libz.dylib */,
 				AACBBE490F95108600F1A2B1 /* Foundation.framework */,
 				C9E8EBDB124F3CD70047C862 /* libz.dylib */,
 				C99D6904164BCC7E00B6A7C3 /* SenTestingKit.framework */,
