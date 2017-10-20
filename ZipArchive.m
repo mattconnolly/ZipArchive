@@ -1,6 +1,6 @@
 /**
 //  ZipArchive.m
-//  
+//
 //
 //  Created by aish on 08-9-11.
 //  acsolu@gmail.com
@@ -9,8 +9,8 @@
 */
 
 #import "ZipArchive.h"
-#import "zlib.h"
-#import "zconf.h"
+#import <zlib.h>
+#import <zconf.h>
 #include "minizip/zip.h"
 #include "minizip/unzip.h"
 
@@ -45,20 +45,20 @@
 
 -(id) initWithFileManager:(NSFileManager*) fileManager
 {
-	if( self=[super init] )
-	{
-		_zipFile = NULL;
+    if( self=[super init] )
+    {
+        _zipFile = NULL;
         _fileManager = fileManager;
         self.stringEncoding = NSUTF8StringEncoding;
         self.compression = ZipArchiveCompressionDefault;
-	}
-	return self;
+    }
+    return self;
 }
 
 -(void) dealloc
 {
     // close any open file operations
-	[self CloseZipFile2];
+    [self CloseZipFile2];
     [self UnzipCloseFile];
     
     // release retained/copied properties.
@@ -66,7 +66,7 @@
     [_delegate release];
     [_unzippedFiles release];
     
-	[super dealloc];
+    [super dealloc];
 }
 
 /**
@@ -84,9 +84,9 @@
 -(BOOL) CreateZipFile2:(NSString*) zipFile append:(BOOL)isAppend
 {
     _zipFile = zipOpen( (const char*)[zipFile UTF8String], (isAppend ? APPEND_STATUS_ADDINZIP : APPEND_STATUS_CREATE) );
-	if( !_zipFile ) 
-		return NO;
-	return YES;
+    if( !_zipFile )
+        return NO;
+    return YES;
 }
 
 /**
@@ -99,8 +99,8 @@
 
 -(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password
 {
-	self.password = password;
-	return [self CreateZipFile2:zipFile];
+    self.password = password;
+    return [self CreateZipFile2:zipFile];
 }
 
 -(BOOL) CreateZipFile2:(NSString*) zipFile Password:(NSString*) password append:(BOOL)isAppend
@@ -141,20 +141,20 @@
     {
         return NO;
     }
-	if( !_zipFile )
-		return NO;
-//	tm_zip filetime;
-	
-	zip_fileinfo zipInfo = {{0}};
-
-	NSDate* fileDate = nil;
+    if( !_zipFile )
+        return NO;
+    //	tm_zip filetime;
     
-	if( attr )
-		fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
-
-	if( fileDate == nil )
+    zip_fileinfo zipInfo = {{0}};
+    
+    NSDate* fileDate = nil;
+    
+    if( attr )
+        fileDate = (NSDate*)[attr objectForKey:NSFileModificationDate];
+    
+    if( fileDate == nil )
         fileDate = [NSDate date];
-
+    
     
     NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSDateComponents* components = [gregorianCalendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay |
@@ -165,55 +165,55 @@
     zipInfo.tmz_date.tm_min = (uInt)components.minute;
     zipInfo.tmz_date.tm_hour = (uInt)components.hour;
     zipInfo.tmz_date.tm_mday = (uInt)components.day;
-    zipInfo.tmz_date.tm_mon = (uInt)components.month;
+    zipInfo.tmz_date.tm_mon = (uInt)(components.month - 1);
     zipInfo.tmz_date.tm_year = (uInt)components.year;
     
-	
-	int ret ;
-	if( [_password length] == 0 )
-	{
-		ret = zipOpenNewFileInZip( _zipFile,
-								  (const char*) [newname cStringUsingEncoding:self.stringEncoding],
-								  &zipInfo,
-								  NULL,0,
-								  NULL,0,
-								  NULL,//comment
-								  Z_DEFLATED,
-								  self.compression );
-	}
-	else
-	{
-		uLong crcValue = crc32( 0L,NULL, 0L );
-		crcValue = crc32( crcValue, (const Bytef*)[data bytes], (unsigned int)[data length] );
-		ret = zipOpenNewFileInZip3( _zipFile,
-								  (const char*) [newname cStringUsingEncoding:self.stringEncoding],
-								  &zipInfo,
-								  NULL,0,
-								  NULL,0,
-								  NULL,//comment
-								  Z_DEFLATED,
-								  self.compression,
-								  0,
-								  15,
-								  8,
-								  Z_DEFAULT_STRATEGY,
-								  [_password cStringUsingEncoding:NSASCIIStringEncoding],
-								  crcValue );
-	}
-	if( ret!=Z_OK )
-	{
-		return NO;
-	}
-	unsigned int dataLen = (unsigned int)[data length];
-	ret = zipWriteInFileInZip( _zipFile, (const void*)[data bytes], dataLen);
-	if( ret!=Z_OK )
-	{
-		return NO;
-	}
-	ret = zipCloseFileInZip( _zipFile );
-	if( ret!=Z_OK )
-		return NO;
-	return YES;
+    
+    int ret ;
+    if( [_password length] == 0 )
+    {
+        ret = zipOpenNewFileInZip( _zipFile,
+                                  (const char*) [newname cStringUsingEncoding:self.stringEncoding],
+                                  &zipInfo,
+                                  NULL,0,
+                                  NULL,0,
+                                  NULL,//comment
+                                  Z_DEFLATED,
+                                  self.compression );
+    }
+    else
+    {
+        uLong crcValue = crc32( 0L,NULL, 0L );
+        crcValue = crc32( crcValue, (const Bytef*)[data bytes], (unsigned int)[data length] );
+        ret = zipOpenNewFileInZip3( _zipFile,
+                                   (const char*) [newname cStringUsingEncoding:self.stringEncoding],
+                                   &zipInfo,
+                                   NULL,0,
+                                   NULL,0,
+                                   NULL,//comment
+                                   Z_DEFLATED,
+                                   self.compression,
+                                   0,
+                                   15,
+                                   8,
+                                   Z_DEFAULT_STRATEGY,
+                                   [_password cStringUsingEncoding:NSASCIIStringEncoding],
+                                   crcValue );
+    }
+    if( ret!=Z_OK )
+    {
+        return NO;
+    }
+    unsigned int dataLen = (unsigned int)[data length];
+    ret = zipWriteInFileInZip( _zipFile, (const void*)[data bytes], dataLen);
+    if( ret!=Z_OK )
+    {
+        return NO;
+    }
+    ret = zipCloseFileInZip( _zipFile );
+    if( ret!=Z_OK )
+        return NO;
+    return YES;
 }
 
 /**
@@ -224,12 +224,12 @@
 
 -(BOOL) CloseZipFile2
 {
-	self.password = nil;
-	if( _zipFile==NULL )
-		return NO;
-	BOOL ret =  zipClose( _zipFile,NULL )==Z_OK?YES:NO;
-	_zipFile = NULL;
-	return ret;
+    self.password = nil;
+    if( _zipFile==NULL )
+        return NO;
+    BOOL ret =  zipClose( _zipFile,NULL )==Z_OK?YES:NO;
+    _zipFile = NULL;
+    return ret;
 }
 
 /**
@@ -245,17 +245,17 @@
     if (_unzippedFiles) [_unzippedFiles release];
     _unzippedFiles = [[NSMutableArray alloc] initWithCapacity:1];
     
-	_unzFile = unzOpen( (const char*)[zipFile UTF8String] );
-	if( _unzFile )
-	{
-		unz_global_info  globalInfo = {0};
-		if( unzGetGlobalInfo(_unzFile, &globalInfo )==UNZ_OK )
-		{
+    _unzFile = unzOpen( (const char*)[zipFile UTF8String] );
+    if( _unzFile )
+    {
+        unz_global_info  globalInfo = {0};
+        if( unzGetGlobalInfo(_unzFile, &globalInfo )==UNZ_OK )
+        {
             _numFiles = globalInfo.number_entry;
-			NSLog(@"%lu entries in the zip file", globalInfo.number_entry);
-		}
-	}
-	return _unzFile!=NULL;
+            NSLog(@"%lu entries in the zip file", globalInfo.number_entry);
+        }
+    }
+    return _unzFile!=NULL;
 }
 
 /**
@@ -268,8 +268,8 @@
 
 -(BOOL) UnzipOpenFile:(NSString*) zipFile Password:(NSString*) password
 {
-	self.password = password;
-	return [self UnzipOpenFile:zipFile];
+    self.password = password;
+    return [self UnzipOpenFile:zipFile];
 }
 
 /**
@@ -288,19 +288,19 @@
 
 -(BOOL) UnzipFileTo:(NSString*) path overWrite:(BOOL) overwrite
 {
-	BOOL success = YES;
+    BOOL success = YES;
     int index = 0;
     int progress = -1;
-	int ret = unzGoToFirstFile( _unzFile );
-	unsigned char		buffer[4096] = {0};
-	if( ret!=UNZ_OK )
-	{
-		[self OutputErrorMessage:@"Failed"];
-	}
+    int ret = unzGoToFirstFile( _unzFile );
+    unsigned char		buffer[4096] = {0};
+    if( ret!=UNZ_OK )
+    {
+        [self OutputErrorMessage:@"Failed"];
+    }
     
-	const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
-	
-	do{
+    const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
+    
+    do{
         @autoreleasepool {
             if( [_password length]==0 )
                 ret = unzOpenCurrentFile( _unzFile );
@@ -406,7 +406,7 @@
                         //	[attr  setValue:orgDate forKey:NSFileCreationDate];
                         if( ![_fileManager setAttributes:attr ofItemAtPath:fullPath error:nil] )
                         {
-                            // cann't set attributes 
+                            // cann't set attributes
                             NSLog(@"Failed to set attributes");
                         }
                         
@@ -436,8 +436,8 @@
                 _progressBlock(progress, index, _numFiles);
             }
         }
-	} while (ret==UNZ_OK && ret!=UNZ_END_OF_LIST_OF_FILE);
-	return success;
+    } while (ret==UNZ_OK && ret!=UNZ_END_OF_LIST_OF_FILE);
+    return success;
 }
 
 -(NSDictionary *)UnzipFileToMemory
@@ -550,21 +550,21 @@
 
 -(BOOL) UnzipCloseFile
 {
-	self.password = nil;
-	if( _unzFile ) {
-		int err = unzClose( _unzFile );
+    self.password = nil;
+    if( _unzFile ) {
+        int err = unzClose( _unzFile );
         _unzFile = nil;
         return err ==UNZ_OK;
     }
-	return YES;
+    return YES;
 }
 
 
 /**
- * Return a list of filenames that are in the zip archive. 
+ * Return a list of filenames that are in the zip archive.
  * No path information is available as this can be called before the zip is expanded.
  *
- * @returns NSArray list of filenames in the zip archive. 
+ * @returns NSArray list of filenames in the zip archive.
  */
 
 -(NSArray*) getZipFileContents     // list the contents of the zip archive. must be called after UnzipOpenFile
@@ -641,8 +641,8 @@
  */
 -(void) OutputErrorMessage:(NSString*) msg
 {
-	if( _delegate && [_delegate respondsToSelector:@selector(ErrorMessage:)] )
-		[_delegate ErrorMessage:msg];
+    if( _delegate && [_delegate respondsToSelector:@selector(ErrorMessage:)] )
+        [_delegate ErrorMessage:msg];
 }
 
 /**
@@ -652,25 +652,25 @@
 
 -(BOOL) OverWrite:(NSString*) file
 {
-	if( _delegate && [_delegate respondsToSelector:@selector(OverWriteOperation:)] )
-		return [_delegate OverWriteOperation:file];
-	return YES;
+    if( _delegate && [_delegate respondsToSelector:@selector(OverWriteOperation:)] )
+        return [_delegate OverWriteOperation:file];
+    return YES;
 }
 
 #pragma mark get NSDate object for 1980-01-01
 -(NSDate*) Date1980
 {
-	NSDateComponents *comps = [[NSDateComponents alloc] init];
-	[comps setDay:1];
-	[comps setMonth:1];
-	[comps setYear:1980];
-	NSCalendar *gregorian = [[NSCalendar alloc]
-							 initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-	NSDate *date = [gregorian dateFromComponents:comps];
-	
-	[comps release];
-	[gregorian release];
-	return date;
+    NSDateComponents *comps = [[NSDateComponents alloc] init];
+    [comps setDay:1];
+    [comps setMonth:1];
+    [comps setYear:1980];
+    NSCalendar *gregorian = [[NSCalendar alloc]
+                             initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDate *date = [gregorian dateFromComponents:comps];
+    
+    [comps release];
+    [gregorian release];
+    return date;
 }
 
 
@@ -699,4 +699,3 @@
 }
 
 @end
-
