@@ -611,9 +611,13 @@ local unzFile unzOpenInternal (const void *path,
     us.z_filefunc.zseek32_file = NULL;
     us.z_filefunc.ztell32_file = NULL;
     if (pzlib_filefunc64_32_def==NULL)
-        fill_fopen64_filefunc(&us.z_filefunc.zfile_func64);
+    {
+         fill_fopen64_filefunc(&us.z_filefunc.zfile_func64);
+    }
     else
-        us.z_filefunc = *pzlib_filefunc64_32_def;
+    {
+         us.z_filefunc = *pzlib_filefunc64_32_def;
+    }
     us.is64bitOpenFunction = is64bitOpenFunction;
 
 
@@ -1109,6 +1113,8 @@ local int unz64local_GetCurrentFileInfoInternal (unzFile file,
     else
         lSeek+=file_info.size_file_comment;
 
+    // silence Xcode analyse warning: Value stored in 'lSeek' is never read
+    (void)lSeek;
 
     if ((err==UNZ_OK) && (pfile_info!=NULL))
         *pfile_info=file_info;
@@ -1539,8 +1545,11 @@ extern int ZEXPORT unzOpenCurrentFile3 (unzFile file, int* method,
         (s->cur_file_info.compression_method!=Z_BZIP2ED) &&
 /* #endif */
         (s->cur_file_info.compression_method!=Z_DEFLATED))
+    {
 
-        err=UNZ_BADZIPFILE;
+        TRYFREE(pfile_in_zip_read_info);
+        return UNZ_BADZIPFILE;
+    }
 
     pfile_in_zip_read_info->crc32_wait=s->cur_file_info.crc;
     pfile_in_zip_read_info->crc32=0;
