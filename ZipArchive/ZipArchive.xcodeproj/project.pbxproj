@@ -37,19 +37,16 @@
 		C908A967160AC26D000395DB /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = C9E8EBEB124F3D030047C862 /* zip.c */; };
 		C908A968160AC26D000395DB /* ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = C9E8EBF8124F3D170047C862 /* ZipArchive.m */; };
 		C908A96A160AC26D000395DB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
-		C908A96B160AC26D000395DB /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9E8EBDB124F3CD70047C862 /* libz.dylib */; };
 		C95AB35A17E1C37800120861 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C95AB35917E1C37800120861 /* XCTest.framework */; };
 		C95AB35B17E1C37800120861 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		C95AB35D17E1C37800120861 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C95AB35C17E1C37800120861 /* UIKit.framework */; };
 		C95AB36317E1C37800120861 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C95AB36117E1C37800120861 /* InfoPlist.strings */; };
 		C95AB36C17E1C3D400120861 /* tests.m in Sources */ = {isa = PBXBuildFile; fileRef = C99D6913164BCC7E00B6A7C3 /* tests.m */; };
 		C95AB36D17E1C43400120861 /* libZipArchive-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libZipArchive-ios.a */; };
-		C95AB36F17E1C44200120861 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C95AB36E17E1C44200120861 /* libz.dylib */; };
 		C95AB37517E1C47D00120861 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C95AB35917E1C37800120861 /* XCTest.framework */; };
 		C95AB37B17E1C47D00120861 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C95AB37917E1C47D00120861 /* InfoPlist.strings */; };
 		C95AB38417E1C49400120861 /* tests.m in Sources */ = {isa = PBXBuildFile; fileRef = C99D6913164BCC7E00B6A7C3 /* tests.m */; };
 		C95AB38517E1C50900120861 /* libZipArchive-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C908A96F160AC26D000395DB /* libZipArchive-mac.a */; };
-		C95AB38617E1C50900120861 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C9E8EBDB124F3CD70047C862 /* libz.dylib */; };
 		C9E8EBED124F3D030047C862 /* crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E8EBE3124F3D030047C862 /* crypt.h */; };
 		C9E8EBEE124F3D030047C862 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = C9E8EBE4124F3D030047C862 /* ioapi.c */; };
 		C9E8EBEF124F3D030047C862 /* ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E8EBE5124F3D030047C862 /* ioapi.h */; };
@@ -106,7 +103,6 @@
 		C95AB36017E1C37800120861 /* ZipArchive ios Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZipArchive ios Tests-Info.plist"; sourceTree = "<group>"; };
 		C95AB36217E1C37800120861 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C95AB36617E1C37800120861 /* ZipArchive ios Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZipArchive ios Tests-Prefix.pch"; sourceTree = "<group>"; };
-		C95AB36E17E1C44200120861 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
 		C95AB37417E1C47D00120861 /* ZipArchive mac Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ZipArchive mac Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C95AB37817E1C47D00120861 /* ZipArchive mac Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ZipArchive mac Tests-Info.plist"; sourceTree = "<group>"; };
 		C95AB37A17E1C47D00120861 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -121,7 +117,6 @@
 		C99D6912164BCC7E00B6A7C3 /* tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tests.h; sourceTree = "<group>"; };
 		C99D6913164BCC7E00B6A7C3 /* tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = tests.m; sourceTree = "<group>"; };
 		C99D6915164BCC7E00B6A7C3 /* tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "tests-Prefix.pch"; sourceTree = "<group>"; };
-		C99D691F164BCCF000B6A7C3 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
 		C9E8EBDB124F3CD70047C862 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		C9E8EBE3124F3D030047C862 /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
 		C9E8EBE4124F3D030047C862 /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
@@ -143,7 +138,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C908A96A160AC26D000395DB /* Foundation.framework in Frameworks */,
-				C908A96B160AC26D000395DB /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,7 +145,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C95AB36F17E1C44200120861 /* libz.dylib in Frameworks */,
 				C95AB36D17E1C43400120861 /* libZipArchive-ios.a in Frameworks */,
 				C95AB35A17E1C37800120861 /* XCTest.framework in Frameworks */,
 				C95AB35D17E1C37800120861 /* UIKit.framework in Frameworks */,
@@ -164,7 +157,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C95AB38517E1C50900120861 /* libZipArchive-mac.a in Frameworks */,
-				C95AB38617E1C50900120861 /* libz.dylib in Frameworks */,
 				C95AB37517E1C47D00120861 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -194,7 +186,6 @@
 		0867D691FE84028FC02AAC07 /* ZipArchive */ = {
 			isa = PBXGroup;
 			children = (
-				C99D691F164BCCF000B6A7C3 /* libz.dylib */,
 				08FB77AEFE84172EC02AAC07 /* Source */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				C99D690C164BCC7E00B6A7C3 /* Common Tests */,
@@ -209,7 +200,6 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C95AB36E17E1C44200120861 /* libz.dylib */,
 				AACBBE490F95108600F1A2B1 /* Foundation.framework */,
 				C9E8EBDB124F3CD70047C862 /* libz.dylib */,
 				C99D6904164BCC7E00B6A7C3 /* SenTestingKit.framework */,
@@ -443,7 +433,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0720;
 				TargetAttributes = {
 					C95AB35717E1C37700120861 = {
 						TestTargetID = D2AAC07D0554694100DB518D;
@@ -630,6 +620,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = "";
@@ -725,6 +716,7 @@
 				INFOPLIST_FILE = "ZipArchive ios Tests/ZipArchive ios Tests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "au.org.CocoaHeads.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				WRAPPER_EXTENSION = xctest;
@@ -764,6 +756,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "ZipArchive ios Tests/ZipArchive ios Tests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "au.org.CocoaHeads.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -810,6 +803,7 @@
 				INFOPLIST_FILE = "ZipArchive mac Tests/ZipArchive mac Tests-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = "";
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "au.org.CocoaHeads.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = xctest;
@@ -849,6 +843,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "ZipArchive mac Tests/ZipArchive mac Tests-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "au.org.CocoaHeads.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = xctest;
