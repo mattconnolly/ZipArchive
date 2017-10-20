@@ -444,7 +444,7 @@
 {
     NSMutableDictionary *fileDictionary = [NSMutableDictionary dictionary];
     
-    BOOL success = YES;
+    //BOOL success = YES;
     int index = 0;
     int progress = -1;
     int ret = unzGoToFirstFile( _unzFile );
@@ -465,7 +465,7 @@
             if( ret!=UNZ_OK )
             {
                 [self OutputErrorMessage:@"Error occurs"];
-                success = NO;
+                //success = NO;
                 break;
             }
             // reading data and write to file
@@ -475,7 +475,7 @@
             if( ret!=UNZ_OK )
             {
                 [self OutputErrorMessage:@"Error occurs while getting file info"];
-                success = NO;
+                //success = NO;
                 unzCloseCurrentFile( _unzFile );
                 break;
             }
@@ -505,7 +505,7 @@
                 else // if (read < 0)
                 {
                     ret = read; // result will be an error code
-                    success = NO;
+                    //success = NO;
                     [self OutputErrorMessage:@"Failed to read zip file"];
                 }
             } while (read > 0);
@@ -521,7 +521,7 @@
                 ret = unzCloseCurrentFile( _unzFile );
                 if (ret != UNZ_OK) {
                     [self OutputErrorMessage:@"file was unzipped but failed crc check"];
-                    success = NO;
+                    //success = NO;
                 }
             }
             

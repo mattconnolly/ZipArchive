@@ -1095,19 +1095,19 @@ local int unz64local_GetCurrentFileInfoInternal (unzFile file,
 
         if (lSeek!=0)
         {
-            if (ZSEEK64(s->z_filefunc, s->filestream,lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
-                lSeek=0;
-            else
+            if (ZSEEK64(s->z_filefunc, s->filestream,lSeek,ZLIB_FILEFUNC_SEEK_CUR)!=0)
+            //    lSeek=0;
+            //else
                 err=UNZ_ERRNO;
         }
 
         if ((file_info.size_file_comment>0) && (commentBufferSize>0))
             if (ZREAD64(s->z_filefunc, s->filestream,szComment,uSizeRead)!=uSizeRead)
                 err=UNZ_ERRNO;
-        lSeek+=file_info.size_file_comment - uSizeRead;
+        //lSeek+=file_info.size_file_comment - uSizeRead;
     }
-    else
-        lSeek+=file_info.size_file_comment;
+    //else
+    //    lSeek+=file_info.size_file_comment;
 
 
     if ((err==UNZ_OK) && (pfile_info!=NULL))
@@ -1534,13 +1534,13 @@ extern int ZEXPORT unzOpenCurrentFile3 (unzFile file, int* method,
         }
     }
 
-    if ((s->cur_file_info.compression_method!=0) &&
+    //if ((s->cur_file_info.compression_method!=0) &&
 /* #ifdef HAVE_BZIP2 */
-        (s->cur_file_info.compression_method!=Z_BZIP2ED) &&
+    //    (s->cur_file_info.compression_method!=Z_BZIP2ED) &&
 /* #endif */
-        (s->cur_file_info.compression_method!=Z_DEFLATED))
+    //    (s->cur_file_info.compression_method!=Z_DEFLATED))
 
-        err=UNZ_BADZIPFILE;
+    //    err=UNZ_BADZIPFILE;
 
     pfile_in_zip_read_info->crc32_wait=s->cur_file_info.crc;
     pfile_in_zip_read_info->crc32=0;
