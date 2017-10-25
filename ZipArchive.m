@@ -392,7 +392,7 @@
                     components.minute = fileInfo.tmu_date.tm_min;
                     components.hour = fileInfo.tmu_date.tm_hour;
                     components.day = fileInfo.tmu_date.tm_mday;
-                    components.month = fileInfo.tmu_date.tm_mon + 1;
+                    components.month = fileInfo.tmu_date.tm_mon;
                     components.year = fileInfo.tmu_date.tm_year;
                     
                     NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
