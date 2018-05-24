@@ -337,6 +337,23 @@
             {// contains a path
                 strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
             }
+            
+            // fix zipper down
+            if ([strPath rangeOfString:@".."].length > 0)
+            {
+                // 忽略
+                ret = unzCloseCurrentFile( _unzFile );
+                if (ret != UNZ_OK) {
+                    [self OutputErrorMessage:@"file with '..' was ignored but failed to be closed"];
+                    success = NO;
+                    break;
+                }
+                
+                ret = unzGoToNextFile( _unzFile );
+                index ++;
+                continue;
+            }
+            
             NSString* fullPath = [path stringByAppendingPathComponent:strPath];
             
             if( isDirectory )
