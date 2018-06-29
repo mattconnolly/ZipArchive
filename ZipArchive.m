@@ -855,7 +855,7 @@
         filename[fileInfo.size_filename] = '\0';
         
         // check if it contains directory
-        NSString * strPath = [NSString stringWithCString:filename encoding:NSASCIIStringEncoding];
+        NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
         free( filename );
         if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
         {// contains a path
@@ -865,9 +865,20 @@
         // Copy name to array
         [allFilenames addObject:strPath];
         
-        unzCloseCurrentFile( _unzFile );
+        ret = unzCloseCurrentFile( _unzFile );
+        if( ret!=UNZ_OK )
+        {
+            [self OutputErrorMessage:[NSString stringWithFormat:@"Error while closing current file %d", ret]];
+            break;
+        }
+        
         ret = unzGoToNextFile( _unzFile );
-    }  while( ret==UNZ_OK && UNZ_OK!=UNZ_END_OF_LIST_OF_FILE );
+        if( ret!=UNZ_OK && ret!=UNZ_END_OF_LIST_OF_FILE)
+        {
+            [self OutputErrorMessage:[NSString stringWithFormat:@"Error while going to next file %d", ret]];
+            break;
+        }
+    }  while( ret==UNZ_OK );
     
     // return an immutable array.
     return [NSArray arrayWithArray:allFilenames];
