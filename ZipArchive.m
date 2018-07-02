@@ -444,7 +444,6 @@
 {
     NSMutableDictionary *fileDictionary = [NSMutableDictionary dictionary];
     
-    BOOL success = YES;
     int index = 0;
     int progress = -1;
     int ret = unzGoToFirstFile( _unzFile );
@@ -465,7 +464,6 @@
             if( ret!=UNZ_OK )
             {
                 [self OutputErrorMessage:@"Error occurs"];
-                success = NO;
                 break;
             }
             // reading data and write to file
@@ -475,7 +473,6 @@
             if( ret!=UNZ_OK )
             {
                 [self OutputErrorMessage:@"Error occurs while getting file info"];
-                success = NO;
                 unzCloseCurrentFile( _unzFile );
                 break;
             }
@@ -505,7 +502,6 @@
                 else // if (read < 0)
                 {
                     ret = read; // result will be an error code
-                    success = NO;
                     [self OutputErrorMessage:@"Failed to read zip file"];
                 }
             } while (read > 0);
@@ -521,7 +517,6 @@
                 ret = unzCloseCurrentFile( _unzFile );
                 if (ret != UNZ_OK) {
                     [self OutputErrorMessage:@"file was unzipped but failed crc check"];
-                    success = NO;
                 }
             }
             
@@ -540,6 +535,262 @@
     
     NSDictionary *resultDictionary = [NSDictionary dictionaryWithDictionary:fileDictionary];
     return resultDictionary;
+}
+
+/**
+ * Unzip a single file to memory in zip file.
+ *
+ * @param fileName      The zipped file name in zip file.
+ * @returns NSData      Nil on failed. File content data on success.
+ */
+-(NSData *)UnzipFileDataWithFileName:(NSString *)fileName
+{
+    int ret = unzGoToFirstFile( _unzFile );
+    unsigned char		buffer[4096] = {0};
+    if( ret!=UNZ_OK )
+    {
+        [self OutputErrorMessage:@"Failed"];
+    }
+    
+    const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
+    
+    NSData *resultData = nil;
+    
+    do{
+        @autoreleasepool {
+            if( [_password length]==0 )
+                ret = unzOpenCurrentFile( _unzFile );
+            else
+                ret = unzOpenCurrentFilePassword( _unzFile, password );
+            if( ret!=UNZ_OK )
+            {
+                [self OutputErrorMessage:@"Error occurs"];
+                break;
+            }
+            // reading data and write to file
+            int read ;
+            unz_file_info	fileInfo ={0};
+            ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+            if( ret!=UNZ_OK )
+            {
+                [self OutputErrorMessage:@"Error occurs while getting file info"];
+                unzCloseCurrentFile( _unzFile );
+                break;
+            }
+            char* filename = (char*) malloc( fileInfo.size_filename +1 );
+            unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
+            filename[fileInfo.size_filename] = '\0';
+            
+            // check if it contains directory
+            NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
+            free( filename );
+            if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
+            {// contains a path
+                strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+            }
+            
+            if (![strPath isEqualToString:fileName])
+            {
+                if (ret == UNZ_OK) {
+                    ret = unzCloseCurrentFile( _unzFile );
+                    if (ret != UNZ_OK) {
+                        [self OutputErrorMessage:@"file was unzipped but failed crc check"];
+                    }
+                }
+                
+                if (ret == UNZ_OK) {
+                    ret = unzGoToNextFile( _unzFile );
+                }
+                continue;
+            }
+            
+            NSMutableData *fileMutableData = [NSMutableData data];
+            do
+            {
+                read = unzReadCurrentFile(_unzFile, buffer, 4096);
+                if (read >= 0)
+                {
+                    if (read != 0)
+                    {
+                        [fileMutableData appendBytes:buffer length:read];
+                    }
+                }
+                else // if (read < 0)
+                {
+                    [self OutputErrorMessage:@"Failed to read zip file"];
+                }
+            } while (read > 0);
+            
+            
+            if (fileMutableData.length > 0)
+            {
+                resultData = [[NSData alloc] initWithData:fileMutableData];
+            }
+            
+            break;
+        }
+    } while (ret==UNZ_OK && ret!=UNZ_END_OF_LIST_OF_FILE && resultData == nil);
+    
+    return [resultData autorelease];
+}
+
+/**
+ * Unzip a single file to disk in zip file.
+ *
+ * @param fileName      The zipped file name in zip file.
+ * @param filePath      The full path of unzip destination.
+ * @param overwrite     should existing files be overwritten
+ * @returns BOOL YES on success
+ */
+- (BOOL)unzipSingleFileWithName:(NSString *)fileName toFilePath:(NSString*)filePath overWrite:(BOOL)overwrite
+{
+    BOOL success = NO;
+    int ret = unzGoToFirstFile( _unzFile );
+    unsigned char		buffer[4096] = {0};
+    if( ret!=UNZ_OK )
+    {
+        [self OutputErrorMessage:@"Failed"];
+    }
+    
+    const char* password = [_password cStringUsingEncoding:NSASCIIStringEncoding];
+    
+    do{
+        @autoreleasepool {
+            if( [_password length]==0 )
+                ret = unzOpenCurrentFile( _unzFile );
+            else
+                ret = unzOpenCurrentFilePassword( _unzFile, password );
+            if( ret!=UNZ_OK )
+            {
+                [self OutputErrorMessage:@"Error occurs"];
+                break;
+            }
+            // reading data and write to file
+            int read ;
+            unz_file_info	fileInfo ={0};
+            ret = unzGetCurrentFileInfo(_unzFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+            if( ret!=UNZ_OK )
+            {
+                [self OutputErrorMessage:@"Error occurs while getting file info"];
+                unzCloseCurrentFile( _unzFile );
+                break;
+            }
+            char* filename = (char*) malloc( fileInfo.size_filename +1 );
+            unzGetCurrentFileInfo(_unzFile, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
+            filename[fileInfo.size_filename] = '\0';
+            
+            // check if it contains directory
+            NSString * strPath = [NSString stringWithCString:filename encoding:self.stringEncoding];
+            BOOL isDirectory = NO;
+            if( filename[fileInfo.size_filename-1]=='/' || filename[fileInfo.size_filename-1]=='\\')
+                isDirectory = YES;
+            free( filename );
+            if( [strPath rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"/\\"]].location!=NSNotFound )
+            {// contains a path
+                strPath = [strPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+            }
+            
+            if (![strPath isEqualToString:fileName])
+            {
+                if (ret == UNZ_OK) {
+                    ret = unzCloseCurrentFile( _unzFile );
+                    if (ret != UNZ_OK) {
+                        [self OutputErrorMessage:@"file was unzipped but failed crc check"];
+                    }
+                }
+                
+                if (ret == UNZ_OK) {
+                    ret = unzGoToNextFile( _unzFile );
+                }
+                continue;
+            }
+            
+            NSString* fullPath = filePath;
+            
+            if( isDirectory )
+                [_fileManager createDirectoryAtPath:fullPath withIntermediateDirectories:YES attributes:nil error:nil];
+            else
+                [_fileManager createDirectoryAtPath:[fullPath stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:nil];
+            
+            FILE* fp = NULL;
+            do
+            {
+                read = unzReadCurrentFile(_unzFile, buffer, 4096);
+                if (read >= 0)
+                {
+                    if (fp == NULL) {
+                        if( [_fileManager fileExistsAtPath:fullPath] && !isDirectory && !overwrite )
+                        {
+                            if( ![self OverWrite:fullPath] )
+                            {
+                                // don't process any more of the file, but continue
+                                break;
+                            }
+                        }
+                        if (!isDirectory) {
+                            fp = fopen( (const char*)[fullPath UTF8String], "wb");
+                            if (fp == NULL) {
+                                [self OutputErrorMessage:@"Failed to open output file for writing"];
+                                break;
+                            }
+                        }
+                    }
+                    fwrite(buffer, read, 1, fp );
+                }
+                else // if (read < 0)
+                {
+                    ret = read; // result will be an error code
+                    [self OutputErrorMessage:@"Failed to read zip file"];
+                }
+            } while (read > 0);
+            
+            if (fp)
+            {
+                fclose( fp );
+                
+                // add the full path of this file to the output array
+                [(NSMutableArray*)_unzippedFiles addObject:fullPath];
+                
+                // set the orignal datetime property
+                if( fileInfo.tmu_date.tm_year!=0 )
+                {
+                    NSDateComponents* components = [[NSDateComponents alloc] init];
+                    components.second = fileInfo.tmu_date.tm_sec;
+                    components.minute = fileInfo.tmu_date.tm_min;
+                    components.hour = fileInfo.tmu_date.tm_hour;
+                    components.day = fileInfo.tmu_date.tm_mday;
+                    components.month = fileInfo.tmu_date.tm_mon + 1;
+                    components.year = fileInfo.tmu_date.tm_year;
+                    
+                    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+                    NSDate* orgDate = [[gregorianCalendar dateFromComponents:components] retain];
+                    [components release];
+                    [gregorianCalendar release];
+                    
+                    NSDictionary* attr = [NSDictionary dictionaryWithObject:orgDate forKey:NSFileModificationDate]; //[_fileManager fileAttributesAtPath:fullPath traverseLink:YES];
+                    if( attr )
+                    {
+                        //	[attr  setValue:orgDate forKey:NSFileCreationDate];
+                        if( ![_fileManager setAttributes:attr ofItemAtPath:fullPath error:nil] )
+                        {
+                            // cann't set attributes
+                            NSLog(@"Failed to set attributes");
+                        }
+                        else
+                        {
+                            success = YES;
+                        }
+                    }
+                    [orgDate release];
+                    orgDate = nil;
+                }
+                
+            }
+            
+            break;
+        }
+    } while (ret==UNZ_OK && ret!=UNZ_END_OF_LIST_OF_FILE);
+    return success;
 }
 
 /**
