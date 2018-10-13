@@ -39,7 +39,6 @@ typedef void(^ZipArchiveProgressUpdateBlock)(int percentage, int filesProcessed,
     ZipArchive calls this selector on the delegate when errors are encountered.
     
     @param      msg     a string describing the error.
-    @result     void
 */
 
 -(void) ErrorMessage:(NSString*) msg;
