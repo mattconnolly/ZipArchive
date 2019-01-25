@@ -65,6 +65,7 @@
     [_password release];
     [_delegate release];
     [_unzippedFiles release];
+    [_progressBlock release];
     
 	[super dealloc];
 }
